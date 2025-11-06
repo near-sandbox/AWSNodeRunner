@@ -1,0 +1,4 @@
+Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info
+"AwsSolutions-EC26","near-infrastructure/NearLocalnetNode/Resource","Suppressed","EBS encryption not required for localnet development environment","Error","The resource creates one or more EBS volumes that have encryption disabled."
+"AwsSolutions-EC28","near-infrastructure/NearLocalnetNode/Resource","Suppressed","Detailed monitoring not required for localnet development environment","Error","The EC2 instance/AutoScaling launch configuration does not have detailed monitoring enabled."
+"AwsSolutions-EC29","near-infrastructure/NearLocalnetNode/Resource","Suppressed","Termination protection not required for localnet development environment","Error","The EC2 instance is not part of an ASG and has Termination Protection disabled."

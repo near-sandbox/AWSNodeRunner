@@ -1,0 +1,13 @@
+Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info
+"AwsSolutions-VPC7","near-common/NearVpc/Resource","Suppressed","VPC Flow Logs not required for localnet development environment","Error","The VPC does not have an associated Flow Log."
+"AwsSolutions-EC23","near-common/NearVpc/SSMEndpoint/SecurityGroup/Resource","Suppressed","SSH access needed for debugging, RPC restricted to VPC","Error","The Security Group allows for 0.0.0.0/0 or ::/0 inbound access."
+"AwsSolutions-EC27","near-common/NearVpc/SSMEndpoint/SecurityGroup/Resource","Compliant","N/A","Error","The Security Group does not have a description."
+"AwsSolutions-EC23","near-common/NearVpc/SSMMessagesEndpoint/SecurityGroup/Resource","Suppressed","SSH access needed for debugging, RPC restricted to VPC","Error","The Security Group allows for 0.0.0.0/0 or ::/0 inbound access."
+"AwsSolutions-EC27","near-common/NearVpc/SSMMessagesEndpoint/SecurityGroup/Resource","Compliant","N/A","Error","The Security Group does not have a description."
+"AwsSolutions-EC23","near-common/NearVpc/EC2MessagesEndpoint/SecurityGroup/Resource","Suppressed","SSH access needed for debugging, RPC restricted to VPC","Error","The Security Group allows for 0.0.0.0/0 or ::/0 inbound access."
+"AwsSolutions-EC27","near-common/NearVpc/EC2MessagesEndpoint/SecurityGroup/Resource","Compliant","N/A","Error","The Security Group does not have a description."
+"AwsSolutions-EC23","near-common/NearNodeSecurityGroup/Resource","Suppressed","SSH access needed for debugging, RPC restricted to VPC","Error","The Security Group allows for 0.0.0.0/0 or ::/0 inbound access."
+"AwsSolutions-EC27","near-common/NearNodeSecurityGroup/Resource","Compliant","N/A","Error","The Security Group does not have a description."
+"AwsSolutions-IAM4","near-common/NearNodeRole/Resource","Suppressed","Amazon managed policies used are restrictive enough","Error","The IAM user, role, or group uses AWS managed policies."
+"AwsSolutions-IAM5","near-common/NearNodeRole/Resource","Compliant","N/A","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."
+"AwsSolutions-IAM5","near-common/NearNodeRole/DefaultPolicy/Resource","Suppressed","Wildcard resources required for cloudformation signal","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."

@@ -1,0 +1,21 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "b154c28ee5e05b76981017eec56660571bbe6093a146ce51cc40747bd23ab58f": {
+      "displayName": "near-localnet-common Template",
+      "source": {
+        "path": "near-common.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "311843862895-us-east-1-7ced7949": {
+          "bucketName": "cdk-hnb659fds-assets-311843862895-us-east-1",
+          "objectKey": "b154c28ee5e05b76981017eec56660571bbe6093a146ce51cc40747bd23ab58f.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-file-publishing-role-311843862895-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

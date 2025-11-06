@@ -1,0 +1,226 @@
+---
+description: Deployment procedures, AWS CLI usage, and operational patterns
+globs:
+  - "**/scripts/*.ts"
+  - "**/package.json"
+alwaysApply: true
+---
+
+# Deployment and Operations
+
+Follow these patterns for deploying and operating NEAR nodes on AWS.
+
+## AWS Profile Configuration
+
+### CDK Commands
+
+- **ALWAYS use** `--profile shai-sandbox-profile` for all CDK commands
+- This is mandatory per project memory
+
+**Pattern:**
+```bash
+cdk deploy --all --profile shai-sandbox-profile
+cdk destroy --all --profile shai-sandbox-profile
+```
+
+### Working Directory
+
+- Run all CDK commands from `/lib/near` directory
+- Do not run commands from project root
+
+**Correct:**
+```bash
+cd lib/near
+npm run deploy
+```
+
+## Deployment Workflow
+
+### Build Process
+
+1. **Build TypeScript**: `npm run build`
+2. **Synthesize**: `npm run synth` (optional, for validation)
+3. **Deploy**: `npm run deploy` (deploys all stacks)
+
+### Stack Deployment Order
+
+Stacks must be deployed in this order:
+1. `near-localnet-common` (~2 minutes)
+2. `near-localnet-infrastructure` (~5 minutes)
+3. `near-localnet-install` (~15 minutes)
+4. `near-localnet-sync` (~immediate)
+5. `near-localnet-test` (~5-10 minutes, optional)
+
+**Total deployment time:** ~22 minutes (excluding NEAR compilation)
+
+### Individual Stack Deployment
+
+```bash
+cd lib/near
+
+# Deploy in order
+cdk deploy near-localnet-common --profile shai-sandbox-profile
+cdk deploy near-localnet-infrastructure --profile shai-sandbox-profile
+cdk deploy near-localnet-install --profile shai-sandbox-profile
+cdk deploy near-localnet-sync --profile shai-sandbox-profile
+cdk deploy near-localnet-test --profile shai-sandbox-profile
+```
+
+## Environment Variables
+
+### Configuration Overrides
+
+Set via environment variables:
+```bash
+export AWS_ACCOUNT_ID=311843862895
+export AWS_REGION=us-east-1
+export NEAR_NETWORK=localnet
+export NEAR_VERSION=2.2.0
+```
+
+### Local Development
+
+- Use `.env.development.local` for local overrides
+- Use `acproxy` in development (not `tee` environment)
+
+## Deployment Outputs
+
+### Viewing Stack Outputs
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name near-localnet-sync \
+  --profile shai-sandbox-profile \
+  --query "Stacks[0].Outputs"
+```
+
+### Key Outputs
+
+- `NearLocalnetRpcUrl`: RPC endpoint (e.g., `http://10.0.1.5:3030`)
+- `NearLocalnetNetworkId`: Network identifier (`localnet`)
+- `NearLocalnetInstanceId`: EC2 instance ID
+- `NearLocalnetInstancePrivateIp`: Private IP address
+
+## Configuration Export
+
+### Export Script
+
+After deployment, export configuration for cross-chain simulator:
+
+```bash
+cd lib/near
+npm run build
+node dist/scripts/export-config.js
+```
+
+**Outputs:**
+- `localnet-config.json`: JSON configuration
+- `.env.localnet`: Environment variables
+
+## Monitoring and Debugging
+
+### SSM Session Manager
+
+Connect to EC2 instance for debugging:
+
+```bash
+aws ssm start-session \
+  --target $(aws cloudformation describe-stacks \
+    --stack-name near-localnet-infrastructure \
+    --profile shai-sandbox-profile \
+    --query "Stacks[0].Outputs[?OutputKey=='near-instance-id'].OutputValue" \
+    --output text) \
+  --profile shai-sandbox-profile
+```
+
+### Log Files
+
+**On EC2 instance:**
+```bash
+# Setup logs
+sudo tail -f /var/log/near-setup.log
+
+# Nearup logs
+sudo tail -f /var/log/nearup.log
+
+# Initialization marker
+cat /var/log/near-init-complete.log
+```
+
+### CloudWatch Dashboard
+
+- Automatically created in sync stack
+- Access via: AWS Console → CloudWatch → Dashboards → `near-localnet-{stack-name}`
+- Metrics: CPU utilization, Network I/O, Service health
+
+### RPC Endpoint Validation
+
+**From EC2 instance:**
+```bash
+curl http://127.0.0.1:3030/status
+```
+
+**From local machine (via SSM port forwarding):**
+```bash
+aws ssm start-session \
+  --target {instance-id} \
+  --document-name AWS-StartPortForwardingSession \
+  --parameters '{"portNumber":["3030"],"localPortNumber":["3030"]}' \
+  --profile shai-sandbox-profile
+```
+
+## Cleanup
+
+### Destroy All Stacks
+
+```bash
+cd lib/near
+npm run destroy
+```
+
+**Or manually (reverse order):**
+```bash
+cdk destroy near-localnet-test --profile shai-sandbox-profile
+cdk destroy near-localnet-sync --profile shai-sandbox-profile
+cdk destroy near-localnet-install --profile shai-sandbox-profile
+cdk destroy near-localnet-infrastructure --profile shai-sandbox-profile
+cdk destroy near-localnet-common --profile shai-sandbox-profile
+```
+
+**Note:** Destroy stacks in reverse dependency order (sync → install → infrastructure → common)
+
+## Troubleshooting
+
+### cfn-signal Failures
+
+1. Check SSM Session Manager access
+2. Review `/var/log/infrastructure-bootstrap.log`
+3. Verify IAM role has `cloudformation:SignalResource` permission
+
+### NEAR Installation Timeout
+
+1. Check UserData execution: `/var/log/near-setup.log`
+2. Verify Rust compilation: `ls ~ubuntu/nearcore/target/release/neard`
+3. Check nearup installation: `~ubuntu/.local/bin/nearup --version`
+
+### RPC Endpoint Not Available
+
+1. Verify nearup running: `pgrep -f nearup`
+2. Check RPC endpoint: `curl http://127.0.0.1:3030/status`
+3. Review nearup logs: `/var/log/nearup.log`
+
+## Package Scripts
+
+### Available Scripts
+
+- `build`: Compile TypeScript (`npx tsc`)
+- `watch`: Watch mode (`npx tsc -w`)
+- `test`: Run Jest tests (`npx jest --detectOpenHandles`)
+- `cdk`: CDK CLI wrapper (`npx cdk`)
+- `synth`: Synthesize CloudFormation (`npx cdk synth`)
+- `deploy`: Deploy all stacks (`npx cdk deploy --all --profile shai-sandbox-profile`)
+- `destroy`: Destroy all stacks (`npx cdk destroy --all --profile shai-sandbox-profile`)
+- `export-config`: Export configuration for cross-chain simulator
+- `trigger-tests`: Trigger test suite execution
+
+**Reference:** See @package.json scripts section and @README.md for detailed procedures.

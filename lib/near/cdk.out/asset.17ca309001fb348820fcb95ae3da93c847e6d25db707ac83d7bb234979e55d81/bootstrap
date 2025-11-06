@@ -1,0 +1,239 @@
+#!/bin/bash
+# Lambda bootstrap handler for NEAR test suite
+# Uses near-cli for all test operations
+
+set -euo pipefail
+
+# Load environment variables
+RPC_URL="${RPC_URL:-}"
+NETWORK_ID="${NETWORK_ID:-localnet}"
+INCLUDE_WRITE_TESTS="${INCLUDE_WRITE_TESTS:-false}"
+TEST_DEPTH="${TEST_DEPTH:-basic}"
+INSTANCE_ID="${INSTANCE_ID:-}"
+
+# CloudWatch namespace for metrics
+METRIC_NAMESPACE="NEAR/Test"
+
+# Test results tracking
+TESTS_PASSED=0
+TESTS_FAILED=0
+TEST_START_TIME=$(date +%s%3N)
+
+# Logging function
+log() {
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" >&2
+}
+
+# Send CloudWatch metric
+put_metric() {
+    local metric_name=$1
+    local value=$2
+    local unit=${3:-Count}
+    
+    aws cloudwatch put-metric-data \
+        --namespace "$METRIC_NAMESPACE" \
+        --metric-name "$metric_name" \
+        --value "$value" \
+        --unit "$unit" \
+        --dimensions FunctionName="near-localnet-test" \
+        --region "${AWS_REGION:-us-east-1}" 2>/dev/null || true
+}
+
+# Test helper function
+run_test() {
+    local test_name=$1
+    local command=$2
+    
+    log "Running test: $test_name"
+    local start_time=$(date +%s%3N)
+    
+    if eval "$command" > /tmp/test-output.log 2>&1; then
+        local end_time=$(date +%s%3N)
+        local duration=$((end_time - start_time))
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+        log "✅ PASS: $test_name (${duration}ms)"
+        return 0
+    else
+        local end_time=$(date +%s%3N)
+        local duration=$((end_time - start_time))
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+        log "❌ FAIL: $test_name (${duration}ms)"
+        log "Error output:"
+        cat /tmp/test-output.log >&2
+        return 1
+    fi
+}
+
+# Check if near-cli is available
+check_near_cli() {
+    if ! command -v near &> /dev/null; then
+        log "ERROR: near-cli not found in PATH"
+        log "PATH: $PATH"
+        log "Attempting to find near-cli..."
+        
+        # Check common locations
+        if [ -f "/opt/near-cli/bin/near" ]; then
+            export PATH="/opt/near-cli/bin:$PATH"
+        elif [ -f "/var/task/near" ]; then
+            export PATH="/var/task:$PATH"
+        else
+            log "ERROR: Could not locate near-cli binary"
+            exit 1
+        fi
+    fi
+    
+    log "Found near-cli: $(which near)"
+    near --version || log "WARNING: Could not get near-cli version"
+}
+
+# Read-only tests
+run_read_tests() {
+    log "=== Running Read-Only Tests ==="
+    
+    # Test 1: RPC Status
+    run_test "RPC Status" "near --nodeUrl $RPC_URL status"
+    
+    # Test 2: Chain Info (view-state)
+    run_test "Chain Info" "near --nodeUrl $RPC_URL view-state"
+    
+    # Test 3: Latest Block
+    run_test "Latest Block" "near --nodeUrl $RPC_URL block latest"
+    
+    # Test 4: View Account (system account)
+    run_test "View System Account" "near --nodeUrl $RPC_URL view-account node0"
+    
+    # Test 5: Network Info (if available)
+    if [ "$TEST_DEPTH" = "comprehensive" ]; then
+        run_test "Network Info" "curl -s $RPC_URL/network_info | jq -r '.num_active_peers // 0'"
+    fi
+    
+    log "Read tests completed: $TESTS_PASSED passed, $TESTS_FAILED failed"
+}
+
+# Write tests (conditional)
+run_write_tests() {
+    if [ "$INCLUDE_WRITE_TESTS" != "true" ]; then
+        log "Skipping write tests (INCLUDE_WRITE_TESTS=false)"
+        return 0
+    fi
+    
+    log "=== Running Write Tests ==="
+    
+    # Generate unique test account name
+    local test_account="test-$(date +%s).testnet"
+    
+    # Test 1: Create Account
+    run_test "Create Test Account" "near --nodeUrl $RPC_URL create-account $test_account --masterAccount node0"
+    
+    # Test 2: Send Transaction
+    if [ $TESTS_FAILED -eq 0 ]; then
+        run_test "Send Transaction" "near --nodeUrl $RPC_URL send $test_account node0 '1 NEAR'"
+    fi
+    
+    # Test 3: Deploy Contract (comprehensive mode only)
+    if [ "$TEST_DEPTH" = "comprehensive" ] && [ $TESTS_FAILED -eq 0 ]; then
+        log "Skipping contract deployment (requires contract wasm file)"
+        # run_test "Deploy Contract" "near --nodeUrl $RPC_URL deploy $test_account contract.wasm"
+    fi
+    
+    log "Write tests completed: $TESTS_PASSED passed, $TESTS_FAILED failed"
+}
+
+# Main execution
+main() {
+    log "=== NEAR Localnet Test Suite ==="
+    log "RPC URL: $RPC_URL"
+    log "Network ID: $NETWORK_ID"
+    log "Include Write Tests: $INCLUDE_WRITE_TESTS"
+    log "Test Depth: $TEST_DEPTH"
+    log "Instance ID: $INSTANCE_ID"
+    
+    # Validate RPC URL
+    if [ -z "$RPC_URL" ]; then
+        log "ERROR: RPC_URL environment variable not set"
+        exit 1
+    fi
+    
+    # Check near-cli availability
+    check_near_cli
+    
+    # Measure RPC response time
+    local rpc_start=$(date +%s%3N)
+    if curl -s --max-time 5 "$RPC_URL/status" > /dev/null 2>&1; then
+        local rpc_end=$(date +%s%3N)
+        local rpc_duration=$((rpc_end - rpc_start))
+        put_metric "RpcResponseTime" "$rpc_duration" "Milliseconds"
+        log "RPC response time: ${rpc_duration}ms"
+    else
+        log "ERROR: Cannot reach RPC endpoint: $RPC_URL"
+        exit 1
+    fi
+    
+    # Run read tests (always)
+    run_read_tests
+    
+    # Run write tests (conditional)
+    run_write_tests
+    
+    # Calculate total duration
+    local test_end_time=$(date +%s%3N)
+    local total_duration=$((test_end_time - TEST_START_TIME))
+    
+    # Send metrics
+    put_metric "TestsPassed" "$TESTS_PASSED" "Count"
+    put_metric "TestsFailed" "$TESTS_FAILED" "Count"
+    put_metric "TestDuration" "$total_duration" "Milliseconds"
+    
+    # Summary
+    log "=== Test Summary ==="
+    log "Total Tests: $((TESTS_PASSED + TESTS_FAILED))"
+    log "Passed: $TESTS_PASSED"
+    log "Failed: $TESTS_FAILED"
+    log "Duration: ${total_duration}ms"
+    
+    # Exit with error if any tests failed
+    if [ $TESTS_FAILED -gt 0 ]; then
+        log "❌ Test suite failed"
+        exit 1
+    else
+        log "✅ All tests passed"
+        exit 0
+    fi
+}
+
+# Handle Lambda invocation
+if [ "${_HANDLER:-}" = "main" ] || [ -z "${_HANDLER:-}" ]; then
+    main "$@"
+else
+    # For Lambda Runtime API
+    while true; do
+        # Read event from Lambda Runtime API
+        EVENT=$(curl -s "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next" 2>/dev/null)
+        REQUEST_ID=$(echo "$EVENT" | head -1 | cut -d: -f2 | tr -d ' "')
+        
+        if [ -z "$REQUEST_ID" ]; then
+            log "No more invocations"
+            break
+        fi
+        
+        # Extract parameters from event (if provided)
+        if command -v jq &> /dev/null; then
+            INCLUDE_WRITE_TESTS=$(echo "$EVENT" | jq -r '.includeWriteTests // env.INCLUDE_WRITE_TESTS // "false"')
+            TEST_DEPTH=$(echo "$EVENT" | jq -r '.testDepth // env.TEST_DEPTH // "basic"')
+        fi
+        
+        # Run tests
+        OUTPUT=$(main 2>&1)
+        EXIT_CODE=$?
+        
+        # Send response
+        curl -s -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response" \
+            -d "{\"statusCode\": $((EXIT_CODE == 0 ? 200 : 500)), \"body\": \"$OUTPUT\"}" > /dev/null
+        
+        if [ $EXIT_CODE -ne 0 ]; then
+            curl -s -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/error" \
+                -d "{\"errorMessage\": \"Tests failed\"}" > /dev/null
+        fi
+    done
+fi
+

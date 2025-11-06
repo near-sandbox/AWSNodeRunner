@@ -1,0 +1,1661 @@
+{
+ "Description": "NEAR Localnet Common Stack - VPC, IAM roles and security groups",
+ "Resources": {
+  "NearVpc17ED9B68": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1SubnetD881C8CB": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.0.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/Subnet",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1RouteTable747F7DDB": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/RouteTable",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1RouteTableAssociation95395CD8": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NearVpcPublicSubnet1RouteTable747F7DDB"
+    },
+    "SubnetId": {
+     "Ref": "NearVpcPublicSubnet1SubnetD881C8CB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/RouteTableAssociation",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1DefaultRouteF19DE171": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "NearVpcIGWE15063E9"
+    },
+    "RouteTableId": {
+     "Ref": "NearVpcPublicSubnet1RouteTable747F7DDB"
+    }
+   },
+   "DependsOn": [
+    "NearVpcVPCGWF140488B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/DefaultRoute",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1EIPB6C33299": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/EIP",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet1NATGateway46691DD0": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "NearVpcPublicSubnet1EIPB6C33299",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "NearVpcPublicSubnet1SubnetD881C8CB"
+    },
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "DependsOn": [
+    "NearVpcPublicSubnet1DefaultRouteF19DE171",
+    "NearVpcPublicSubnet1RouteTableAssociation95395CD8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet1/NATGateway",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet2SubnetB04D0CC4": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.64.0/18",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet2/Subnet",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet2RouteTable76BF65CA": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet2/RouteTable",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet2RouteTableAssociationC52FE97E": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NearVpcPublicSubnet2RouteTable76BF65CA"
+    },
+    "SubnetId": {
+     "Ref": "NearVpcPublicSubnet2SubnetB04D0CC4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet2/RouteTableAssociation",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPublicSubnet2DefaultRoute150CC9AA": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "NearVpcIGWE15063E9"
+    },
+    "RouteTableId": {
+     "Ref": "NearVpcPublicSubnet2RouteTable76BF65CA"
+    }
+   },
+   "DependsOn": [
+    "NearVpcVPCGWF140488B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PublicSubnet2/DefaultRoute",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet1SubnetE647D3D1": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.128.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet1/Subnet",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet1RouteTable4251C15C": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet1/RouteTable",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet1RouteTableAssociationDA627129": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NearVpcPrivateSubnet1RouteTable4251C15C"
+    },
+    "SubnetId": {
+     "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet1/RouteTableAssociation",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet1DefaultRoute9463E10D": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "NearVpcPublicSubnet1NATGateway46691DD0"
+    },
+    "RouteTableId": {
+     "Ref": "NearVpcPrivateSubnet1RouteTable4251C15C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet1/DefaultRoute",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet2SubnetDDB4FE3B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.192.0/18",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet2/Subnet",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet2RouteTable856E0B03": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet2/RouteTable",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet2RouteTableAssociationB57FEB65": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "NearVpcPrivateSubnet2RouteTable856E0B03"
+    },
+    "SubnetId": {
+     "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet2/RouteTableAssociation",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcPrivateSubnet2DefaultRoute0D7EEA32": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "NearVpcPublicSubnet1NATGateway46691DD0"
+    },
+    "RouteTableId": {
+     "Ref": "NearVpcPrivateSubnet2RouteTable856E0B03"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/PrivateSubnet2/DefaultRoute",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcIGWE15063E9": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/IGW",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcVPCGWF140488B": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "NearVpcIGWE15063E9"
+    },
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/VPCGW",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcSSMEndpointSecurityGroup331F7B95": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "near-common/NearVpc/SSMEndpoint/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "NearVpc17ED9B68",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "NearVpc17ED9B68",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/SSMEndpoint/SecurityGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcSSMEndpoint3BD57E66": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "NearVpcSSMEndpointSecurityGroup331F7B95",
+       "GroupId"
+      ]
+     }
+    ],
+    "ServiceName": "com.amazonaws.us-east-1.ssm",
+    "SubnetIds": [
+     {
+      "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
+     },
+     {
+      "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcEndpointType": "Interface",
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/SSMEndpoint/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcSSMMessagesEndpointSecurityGroup1D2CE1B5": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "near-common/NearVpc/SSMMessagesEndpoint/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "NearVpc17ED9B68",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "NearVpc17ED9B68",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/SSMMessagesEndpoint/SecurityGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcSSMMessagesEndpoint06C1042C": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "NearVpcSSMMessagesEndpointSecurityGroup1D2CE1B5",
+       "GroupId"
+      ]
+     }
+    ],
+    "ServiceName": "com.amazonaws.us-east-1.ssmmessages",
+    "SubnetIds": [
+     {
+      "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
+     },
+     {
+      "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcEndpointType": "Interface",
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/SSMMessagesEndpoint/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcEC2MessagesEndpointSecurityGroup1BCA66F4": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "near-common/NearVpc/EC2MessagesEndpoint/SecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "NearVpc17ED9B68",
+        "CidrBlock"
+       ]
+      },
+      "Description": {
+       "Fn::Join": [
+        "",
+        [
+         "from ",
+         {
+          "Fn::GetAtt": [
+           "NearVpc17ED9B68",
+           "CidrBlock"
+          ]
+         },
+         ":443"
+        ]
+       ]
+      },
+      "FromPort": 443,
+      "IpProtocol": "tcp",
+      "ToPort": 443
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/EC2MessagesEndpoint/SecurityGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearVpcEC2MessagesEndpoint7BADCC32": {
+   "Type": "AWS::EC2::VPCEndpoint",
+   "Properties": {
+    "PrivateDnsEnabled": true,
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "NearVpcEC2MessagesEndpointSecurityGroup1BCA66F4",
+       "GroupId"
+      ]
+     }
+    ],
+    "ServiceName": "com.amazonaws.us-east-1.ec2messages",
+    "SubnetIds": [
+     {
+      "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
+     },
+     {
+      "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Name",
+      "Value": "near-common/NearVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcEndpointType": "Interface",
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearVpc/EC2MessagesEndpoint/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearNodeSecurityGroup8025226D": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "NEAR localnet node security group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "NearVpc17ED9B68",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Allow NEAR RPC from within VPC",
+      "FromPort": 3030,
+      "IpProtocol": "tcp",
+      "ToPort": 3030
+     },
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "SSH access for debugging",
+      "FromPort": 22,
+      "IpProtocol": "tcp",
+      "ToPort": 22
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Ref": "NearVpc17ED9B68"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearNodeSecurityGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearNodeRole5BF1752D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearNodeRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "NearNodeRoleDefaultPolicyD9A01D49": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "cloudformation:SignalResource",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "NearNodeRoleDefaultPolicyD9A01D49",
+    "Roles": [
+     {
+      "Ref": "NearNodeRole5BF1752D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/NearNodeRole/DefaultPolicy/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Amazon managed policies used are restrictive enough",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "Wildcard resources required for cloudformation signal",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "SSH access needed for debugging, RPC restricted to VPC",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "VPC Flow Logs not required for localnet development environment",
+       "id": "AwsSolutions-VPC7"
+      }
+     ]
+    }
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12Q0YrCMBBFv2Xf06wEf0BExJfd0C6+Lmk6sqNtUpKJIqX/vtNULfh0bw43kztRUiklVx/mFgvbXIoWazlUZOxFMPodwCo5HHsrtid31FuhU92irVLtgCa2uNIngh9Tt7DwhW1i9BYNoXev8GR2Bz3Jl6G9IbiZu9ABr2yXwQdHENg/A3OTx2lD3PWvA0ci507GAtfduab3yLACmwLSfR986nOxd8CznulRoOnkUPp5h6za87750dmNoygh+hRsznwn6hNfdL4BeY6fV7WW03+eI2IRkiPsQJaz/gMHqKh9bAEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-common/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "InstanceRoleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NearNodeRole5BF1752D",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "NearLocalnetInstanceRoleArn"
+   }
+  },
+  "VpcId": {
+   "Value": {
+    "Ref": "NearVpc17ED9B68"
+   },
+   "Export": {
+    "Name": "NearLocalnetVpcId"
+   }
+  },
+  "SecurityGroupId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NearNodeSecurityGroup8025226D",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "NearLocalnetSecurityGroupId"
+   }
+  },
+  "ExportsOutputRefNearNodeRole5BF1752D644CF4FE": {
+   "Value": {
+    "Ref": "NearNodeRole5BF1752D"
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputRefNearNodeRole5BF1752D644CF4FE"
+   }
+  },
+  "ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NearNodeSecurityGroup8025226D",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018"
+   }
+  },
+  "ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF": {
+   "Value": {
+    "Ref": "NearVpcPublicSubnet1SubnetD881C8CB"
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF"
+   }
+  },
+  "ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339": {
+   "Value": {
+    "Fn::GetAtt": [
+     "NearVpc17ED9B68",
+     "CidrBlock"
+    ]
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339"
+   }
+  },
+  "ExportsOutputRefNearVpc17ED9B68D255C35F": {
+   "Value": {
+    "Ref": "NearVpc17ED9B68"
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputRefNearVpc17ED9B68D255C35F"
+   }
+  },
+  "ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E": {
+   "Value": {
+    "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E"
+   }
+  },
+  "ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24": {
+   "Value": {
+    "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+   },
+   "Export": {
+    "Name": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

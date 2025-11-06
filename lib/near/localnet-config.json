@@ -1,0 +1,7 @@
+{
+  "rpcUrl": "http://10.0.41.221:3030",
+  "networkId": "localnet",
+  "instanceId": "i-0cbca066404766100",
+  "instancePrivateIp": "10.0.41.221",
+  "instancePublicIp": "54.172.44.239"
+}

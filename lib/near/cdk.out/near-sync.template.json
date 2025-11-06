@@ -1,0 +1,245 @@
+{
+ "Description": "NEAR Localnet Sync Stack - Validate service and expose RPC endpoint",
+ "Resources": {
+  "nearvalidateservice": {
+   "Type": "AWS::SSM::Document",
+   "Properties": {
+    "Content": {
+     "schemaVersion": "2.2",
+     "description": "Validate NEAR localnet service is running",
+     "parameters": {
+      "nearNetwork": {
+       "type": "String",
+       "description": "NEAR network",
+       "default": "localnet"
+      }
+     },
+     "mainSteps": [
+      {
+       "action": "aws:runShellScript",
+       "name": "validateServiceRunning",
+       "inputs": {
+        "timeoutSeconds": "300",
+        "runCommand": [
+         "#!/bin/bash",
+         "set -euo pipefail",
+         "echo '[SYNC-STACK] Validating NEAR localnet service...'",
+         "",
+         "# Check if nearup process is running",
+         "if ! pgrep -f 'nearup' > /dev/null; then",
+         "  echo '[SYNC-STACK] ERROR: nearup process not found'",
+         "  exit 1",
+         "fi",
+         "",
+         "# Wait for RPC endpoint to be available",
+         "MAX_WAIT=300",
+         "ELAPSED=0",
+         "while [ $ELAPSED -lt $MAX_WAIT ]; do",
+         "  if curl -s http://127.0.0.1:3030/status > /dev/null 2>&1; then",
+         "    echo '[SYNC-STACK] RPC endpoint is available'",
+         "    break",
+         "  fi",
+         "  echo '[SYNC-STACK] Waiting for RPC endpoint... ($ELAPSED seconds)'",
+         "  sleep 10",
+         "  ELAPSED=$((ELAPSED + 10))",
+         "done",
+         "",
+         "# Final check",
+         "if ! curl -s http://127.0.0.1:3030/status > /dev/null 2>&1; then",
+         "  echo '[SYNC-STACK] ERROR: RPC endpoint not available after $MAX_WAIT seconds'",
+         "  exit 1",
+         "fi",
+         "",
+         "# Get status for verification",
+         "STATUS=$(curl -s http://127.0.0.1:3030/status | jq -r '.chain_id // \"unknown\"')",
+         "echo '[SYNC-STACK] NEAR localnet chain_id: $STATUS'",
+         "echo '[SYNC-STACK] Service validation complete'"
+        ]
+       }
+      }
+     ]
+    },
+    "DocumentFormat": "YAML",
+    "DocumentType": "Command",
+    "Name": "near-validate-service-near-localnet-sync",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-sync/near-validate-service",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "SSM wildcard permissions needed for command execution",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "nearvalidateserviceexecution": {
+   "Type": "AWS::SSM::Association",
+   "Properties": {
+    "ApplyOnlyAtCronInterval": false,
+    "MaxConcurrency": "1",
+    "MaxErrors": "0",
+    "Name": {
+     "Ref": "nearvalidateservice"
+    },
+    "Parameters": {
+     "nearNetwork": [
+      "localnet"
+     ]
+    },
+    "Targets": [
+     {
+      "Key": "InstanceIds",
+      "Values": [
+       {
+        "Fn::ImportValue": "NearLocalnetInstanceId"
+       }
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-sync/near-validate-service-execution",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "SSM wildcard permissions needed for command execution",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "nearlocalnetdashboard990901BA": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Instance Status\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/EC2\",\"CPUUtilization\",\"InstanceId\",\"",
+       {
+        "Fn::ImportValue": "NearLocalnetInstanceId"
+       },
+       "\"],[\"AWS/EC2\",\"NetworkIn\",\"InstanceId\",\"",
+       {
+        "Fn::ImportValue": "NearLocalnetInstanceId"
+       },
+       "\",{\"stat\":\"Sum\",\"yAxis\":\"right\"}],[\"AWS/EC2\",\"NetworkOut\",\"InstanceId\",\"",
+       {
+        "Fn::ImportValue": "NearLocalnetInstanceId"
+       },
+       "\",{\"stat\":\"Sum\",\"yAxis\":\"right\"}]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "near-localnet-near-localnet-sync"
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-sync/near-localnet-dashboard/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "SSM wildcard permissions needed for command execution",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2NQQrCMBBFz+I+GSV4AbF7QQ8g00mlaZuMdCZ2EXJ3GwRX/7/Hh+/AOQenA25iyc92CT2UhyLNZlfPIhKhXF+pY8pxSGr2fhFhCqiBUzW0cPYbKo1QOpSxZ1x9W/2h1oa3rO+s1ST2A0xy/LgztONJQrBrThriAPdffgGi9/yblQAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-sync/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "syncstatus": {
+   "Value": {
+    "Ref": "nearvalidateserviceexecution"
+   },
+   "Export": {
+    "Name": "NearLocalnetSyncStatus"
+   }
+  },
+  "nearrpcurl": {
+   "Description": "NEAR localnet RPC endpoint",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "http://",
+      {
+       "Fn::ImportValue": "NearLocalnetInstancePrivateIp"
+      },
+      ":3030"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "NearLocalnetRpcUrl"
+   }
+  },
+  "nearnetworkid": {
+   "Description": "NEAR network identifier",
+   "Value": "localnet",
+   "Export": {
+    "Name": "NearLocalnetNetworkId"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

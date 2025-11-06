@@ -1,0 +1,184 @@
+---
+description: Testing standards, quality checks, and code validation patterns
+globs:
+  - "**/*.test.ts"
+  - "**/test/**/*.ts"
+  - "**/jest.config.js"
+alwaysApply: true
+---
+
+# Testing and Quality Standards
+
+Follow these patterns for testing, code quality, and validation.
+
+## Testing Framework
+
+### Jest Configuration
+
+- Use Jest with TypeScript (`ts-jest`)
+- Configuration file: `jest.config.js`
+- Test file pattern: `*.test.ts`
+- Tests location: `test/` directory
+
+**Run tests:**
+```bash
+npm test
+```
+
+### Test Structure
+
+- One test file per stack: `{stack-name}.test.ts`
+- Group related tests with `describe` blocks
+- Use descriptive test names: `it('should create VPC with 2 AZs')`
+
+**Pattern:**
+```typescript
+import { NearCommonStack } from '../lib/common-stack';
+import * as cdk from 'aws-cdk-lib';
+
+describe('NearCommonStack', () => {
+    it('should create VPC with 2 AZs', () => {
+        const app = new cdk.App();
+        const stack = new NearCommonStack(app, 'TestStack', {});
+        // assertions
+    });
+});
+```
+
+## CDK Testing Patterns
+
+### Stack Synthesis Testing
+
+- Test that stacks synthesize without errors
+- Verify resource counts and types
+- Check properties match expected values
+
+### Resource Validation
+
+- Verify VPC configuration (AZs, NAT gateways)
+- Validate security group rules
+- Check IAM role policies
+- Ensure outputs are exported correctly
+
+### Mocking and Fixtures
+
+- Use CDK's synthesis capabilities for testing
+- Create minimal test stacks with required props
+- Validate CloudFormation template structure
+
+## CDK Nag Security Checks
+
+### Automated Security Scanning
+
+- CDK Nag runs on every synth/deploy
+- Report generation: `cdk.out/AwsSolutions-{stack-name}-NagReport.csv`
+- Apply `AwsSolutionsChecks` in `app.ts`
+
+**Configuration:**
+```typescript
+cdk.Aspects.of(app).add(
+    new nag.AwsSolutionsChecks({
+        verbose: false,
+        reports: true,
+        logIgnores: false,
+    })
+);
+```
+
+### Suppression Documentation
+
+- Document all Nag suppressions with clear reasons
+- Prefer fixing issues over suppressing
+- Review suppressions periodically
+
+**Required format:**
+```typescript
+{
+    id: "AwsSolutions-EC23",
+    reason: "SSH access needed for debugging, RPC restricted to VPC",
+}
+```
+
+## Type Checking
+
+### TypeScript Strict Mode
+
+- All files must pass strict type checking
+- No `any` types without justification
+- Enable all strict flags: `strict`, `strictNullChecks`, `noImplicitReturns`
+
+### Type Definitions
+
+- Generate `.d.ts` files via `declaration: true`
+- Keep type definitions in version control
+- Export types for external use
+
+## Build Validation
+
+### Pre-Deployment Checks
+
+- Always run `npm run build` before deployment
+- Verify no TypeScript errors
+- Check that generated files are correct
+
+### Continuous Integration
+
+- Run tests and type checks in CI/CD
+- Validate CloudFormation templates via `cdk synth`
+- Check CDK Nag reports
+
+## Test Stack
+
+### Functional Testing
+
+- Test stack (`test-stack.ts`) runs functional tests on deployed infrastructure
+- Uses Lambda functions to validate NEAR node functionality
+- Tests RPC endpoint availability and basic operations
+
+### Test Configuration
+
+- Controlled via CDK context:
+  - `near:test:includeWriteTests` - Enable write operations
+  - `near:test:testDepth` - `"basic"` or `"comprehensive"`
+
+**Usage:**
+```bash
+cdk deploy near-localnet-test --context near:test:includeWriteTests=true
+```
+
+## Code Quality Patterns
+
+### Error Handling
+
+- Use descriptive error messages
+- Fail fast on invalid configurations
+- Log errors for debugging
+
+### Code Comments
+
+- Document complex logic
+- Explain NEAR-specific patterns
+- Include AWS service references
+
+### Variable Naming
+
+- Use descriptive names
+- Follow TypeScript conventions
+- Match AWS resource naming where applicable
+
+## Test Suite Assets
+
+### Test Scripts
+
+- Location: `assets/test-suite/`
+- Bootstrap script: `bootstrap`
+- Handler: `handler.py`
+- Utilities: `utils.sh`
+
+### Lambda Test Functions
+
+- Deployed via test stack
+- Execute NEAR RPC tests
+- Validate node functionality
+
+**Reference:** See @jest.config.js for test configuration and @test/ for test examples.

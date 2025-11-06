@@ -1,0 +1,12 @@
+Rule ID,Resource ID,Compliance,Exception Reason,Rule Level,Rule Info
+"AwsSolutions-IAM4","near-test/TestLambdaRole/Resource","Suppressed","AWS managed policies are appropriate for Lambda execution roles","Error","The IAM user, role, or group uses AWS managed policies."
+"AwsSolutions-IAM4","near-test/TestLambdaRole/Resource","Suppressed","AWS managed policies are appropriate for Lambda execution roles","Error","The IAM user, role, or group uses AWS managed policies."
+"AwsSolutions-IAM5","near-test/TestLambdaRole/Resource","Compliant","N/A","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."
+"AwsSolutions-IAM5","near-test/TestLambdaRole/DefaultPolicy/Resource","Suppressed","CloudWatch PutMetricData requires wildcard for namespace filtering","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."
+"AwsSolutions-EC23","near-test/TestLambdaSecurityGroup/Resource","Suppressed","Security group allows VPC CIDR access for RPC endpoint testing","Error","The Security Group allows for 0.0.0.0/0 or ::/0 inbound access."
+"AwsSolutions-EC27","near-test/TestLambdaSecurityGroup/Resource","Compliant","N/A","Error","The Security Group does not have a description."
+"AwsSolutions-L1","near-test/TestFunction/Resource","Suppressed","Node.js 20.x is appropriate runtime for Lambda function with near-api-js","Error","The non-container Lambda function is not configured to use the latest runtime version."
+"AwsSolutions-IAM5","near-test/TestCustomResource/CustomResourcePolicy/Resource","Compliant","N/A","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."
+"AwsSolutions-IAM4","near-test/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource","Suppressed","AWS managed policies are appropriate for Lambda execution roles","Error","The IAM user, role, or group uses AWS managed policies."
+"AwsSolutions-IAM5","near-test/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource","Compliant","N/A","Error","The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission."
+"AwsSolutions-L1","near-test/AWS679f53fac002430cb0da5b7982bd2287/Resource","Compliant","N/A","Error","The non-container Lambda function is not configured to use the latest runtime version."

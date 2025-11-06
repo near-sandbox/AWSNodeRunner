@@ -1,0 +1,139 @@
+---
+description: AWS CDK patterns and best practices for NEAR node deployment
+globs:
+  - "**/*stack*.ts"
+  - "**/*construct*.ts"
+  - "**/app.ts"
+alwaysApply: true
+---
+
+# AWS CDK Patterns and Best Practices
+
+This project uses AWS CDK v2 with TypeScript for deploying NEAR Protocol blockchain nodes. Follow these patterns consistently.
+
+## Stack Architecture
+
+### Multi-Stack Design
+
+This project follows a multi-stack architecture following AWS best practices for lifecycle separation:
+
+1. **Common Stack** (`common-stack.ts`): VPC, IAM roles, security groups (~2 min)
+2. **Infrastructure Stack** (`infrastructure-stack.ts`): EC2 instance with cfn-signal (~5 min)
+3. **Install Stack** (`install-stack.ts`): Validates NEAR installation completion (~15 min)
+4. **Sync Stack** (`sync-stack.ts`): Validates service running and exposes RPC endpoint (~immediate)
+5. **Test Stack** (`test-stack.ts`): Functional test suite (~5-10 min)
+
+### Stack Dependencies
+
+- Always use explicit dependencies via `stack.addDependency()` in `app.ts`
+- Pass resources directly (VPC, security groups, roles) rather than using `Fn.importValue` when stacks are in the same app
+- Export values via `CfnOutput` with `exportName` for cross-stack references when needed
+
+**Example pattern:**
+```typescript
+const commonStack = new NearCommonStack(app, "near-common", { /* ... */ });
+const infraStack = new NearInfrastructureStack(app, "near-infrastructure", {
+    vpc: commonStack.vpc,
+    securityGroup: commonStack.securityGroup,
+    instanceRole: commonStack.instanceRole,
+});
+infraStack.addDependency(commonStack);
+```
+
+## CDK Patterns
+
+### Stack Props Interfaces
+
+- Always create explicit props interfaces extending `cdk.StackProps`
+- Use TypeScript types from `config/node-config.interface` for configuration
+- Document required vs optional props in JSDoc
+
+### Resource Naming
+
+- Use kebab-case for stack names: `near-localnet-{stack-type}`
+- Use PascalCase for CDK construct IDs: `NearLocalnetNode`, `NearVpc`
+- Use descriptive resource names in CloudFormation outputs
+
+### Outputs and Exports
+
+- Always export critical values via `CfnOutput` for debugging and cross-stack references
+- Use consistent `exportName` patterns: `NearLocalnet{ResourceName}`
+- Include instance IDs, IP addresses, and RPC URLs as outputs
+
+**Pattern:**
+```typescript
+new cdk.CfnOutput(this, "near-instance-id", {
+    value: this.instanceId,
+    exportName: "NearLocalnetInstanceId",
+});
+```
+
+## CDK Nag Security
+
+- Apply `AwsSolutionsChecks` in `app.ts` with verbose reporting
+- Document Nag suppressions with clear reasons
+- Prefer fixing issues over suppressing when possible
+- Suppressions should be resource-specific, not stack-wide
+
+**Pattern:**
+```typescript
+nag.NagSuppressions.addResourceSuppressions(
+    this,
+    [{
+        id: "AwsSolutions-EC23",
+        reason: "SSH access needed for debugging, RPC restricted to VPC",
+    }],
+    true // applyToChildren
+);
+```
+
+## AWS Service Patterns
+
+### EC2 Instances
+
+- Always use `x86_64` architecture for NEAR nodes (ARM64 not supported)
+- Default instance type: `m7a.2xlarge` (but config allows override to `t3.large` for testing)
+- Use Ubuntu 24.04 LTS via SSM parameter: `/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id`
+- Enable SSM Session Manager: `ssmSessionPermissions: true`
+- Use GP3 volumes for better performance
+
+### VPC Configuration
+
+- Use custom VPC with 2 AZs for high availability
+- Single NAT Gateway for cost efficiency (development environment)
+- Create VPC endpoints for SSM, SSM Messages, and EC2 Messages for private subnet access
+- Use public subnets for EC2 instances (needed for package downloads)
+
+### Security Groups
+
+- RPC port 3030: VPC-only access (`ec2.Peer.ipv4(this.vpc.vpcCidrBlock)`)
+- SSH port 22: Open to all IPs for debugging (documented suppression)
+- Outbound: Allow all (`allowAllOutbound: true`) for package downloads
+
+### IAM Roles
+
+- Use managed policy `AmazonSSMManagedInstanceCore` for SSM access
+- Add CloudFormation signal permission: `cloudformation:SignalResource`
+- Follow principle of least privilege
+
+## UserData Patterns
+
+- Use `ec2.UserData.forLinux()` with bash scripts
+- Always use `set -e` for error handling
+- Log everything: `exec > >(tee /var/log/near-setup.log) 2>&1`
+- Run commands as `ubuntu` user (not root) where possible
+- Wait for async operations (e.g., `sleep 60` after nearup)
+- Create completion markers: `echo "NEAR localnet initialization complete"`
+
+## Tags
+
+- Apply project tags at the app level: `cdk.Tags.of(app).add("Project", "AWSNearLocalnet")`
+- Tag stacks with architecture pattern: `cdk.Tags.of(app).add("Architecture", "MultiStack")`
+
+## Environment Configuration
+
+- Always use `--profile shai-sandbox-profile` for CDK commands
+- Set account/region via environment variables or config defaults
+- Use context for feature flags: `app.node.tryGetContext("near:test:includeWriteTests")`
+
+**Reference:** See @app.ts for the complete application structure and @infrastructure-stack.ts for EC2 patterns.

@@ -1,0 +1,194 @@
+{
+ "Description": "NEAR Localnet Install Stack - Validate installation completion",
+ "Resources": {
+  "nearvalidateinstall": {
+   "Type": "AWS::SSM::Document",
+   "Properties": {
+    "Content": {
+     "schemaVersion": "2.2",
+     "description": "Validate NEAR localnet installation is complete",
+     "parameters": {
+      "nearVersion": {
+       "type": "String",
+       "description": "NEAR Protocol version to validate",
+       "default": "2.2.0"
+      },
+      "nearNetwork": {
+       "type": "String",
+       "description": "NEAR network",
+       "default": "localnet"
+      }
+     },
+     "mainSteps": [
+      {
+       "action": "aws:runShellScript",
+       "name": "waitForInstallComplete",
+       "inputs": {
+        "timeoutSeconds": "900",
+        "runCommand": [
+         "#!/bin/bash",
+         "set -euo pipefail",
+         "echo '[INSTALL-STACK] Waiting for NEAR installation to complete...'",
+         "source /etc/near-environment || true",
+         "",
+         "# Check if initialization log exists (created by UserData)",
+         "MAX_WAIT=900  # 15 minutes",
+         "ELAPSED=0",
+         "while [ ! -f /var/log/near-init-complete.log ] && [ $ELAPSED -lt $MAX_WAIT ]; do",
+         "  echo '[INSTALL-STACK] Waiting for installation... ($ELAPSED seconds)'",
+         "  sleep 30",
+         "  ELAPSED=$((ELAPSED + 30))",
+         "done",
+         "",
+         "if [ ! -f /var/log/near-init-complete.log ]; then",
+         "  echo '[INSTALL-STACK] ERROR: Installation timeout'",
+         "  exit 1",
+         "fi",
+         "",
+         "# Check if neard binary exists",
+         "if [ ! -f ~ubuntu/nearcore/target/release/neard ]; then",
+         "  echo '[INSTALL-STACK] ERROR: neard binary not found'",
+         "  exit 1",
+         "fi",
+         "",
+         "# Check if nearup is installed",
+         "if ! command -v ~ubuntu/.local/bin/nearup &> /dev/null; then",
+         "  echo '[INSTALL-STACK] ERROR: nearup not found'",
+         "  exit 1",
+         "fi",
+         "",
+         "echo '[INSTALL-STACK] Installation validation complete'",
+         "echo '[INSTALL-STACK] NEAR localnet is ready'"
+        ]
+       }
+      }
+     ]
+    },
+    "DocumentFormat": "YAML",
+    "DocumentType": "Command",
+    "Name": "near-validate-install-near-localnet-install",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-install/near-validate-install",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "SSM wildcard permissions needed for command execution",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "nearvalidateexecution": {
+   "Type": "AWS::SSM::Association",
+   "Properties": {
+    "ApplyOnlyAtCronInterval": false,
+    "MaxConcurrency": "1",
+    "MaxErrors": "0",
+    "Name": {
+     "Ref": "nearvalidateinstall"
+    },
+    "Parameters": {
+     "nearVersion": [
+      "2.2.0"
+     ],
+     "nearNetwork": [
+      "localnet"
+     ]
+    },
+    "Targets": [
+     {
+      "Key": "InstanceIds",
+      "Values": [
+       {
+        "Fn::ImportValue": "NearLocalnetInstanceId"
+       }
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-install/near-validate-execution",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "SSM wildcard permissions needed for command execution",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzIy0jNQTCwv1k1OydbNyUzSqw4uSUzO1gEKxRcX5+pVO6flueQnl+am5pXoANmOxcX5yZmJJZn5ebUgvn9pSUFpSa1OXn5Kql5WsX6ZkYkeyMis4sxM3aLSvJLM3FS9IAgNAGBhXOpvAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-install/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "installdocumentname": {
+   "Value": {
+    "Ref": "nearvalidateinstall"
+   },
+   "Export": {
+    "Name": "NearLocalnetInstallDocumentName"
+   }
+  },
+  "installstatus": {
+   "Description": "Validates NEAR localnet installation from UserData script",
+   "Value": "Installation validation initiated - monitor via SSM",
+   "Export": {
+    "Name": "NearLocalnetInstallStatus"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

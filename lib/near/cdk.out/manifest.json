@@ -1,0 +1,1277 @@
+{
+  "version": "48.0.0",
+  "artifacts": {
+    "near-common.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "near-common.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "near-common": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://311843862895/us-east-1",
+      "properties": {
+        "templateFile": "near-common.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Architecture": "MultiStack",
+          "Project": "AWSNearLocalnet"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/b154c28ee5e05b76981017eec56660571bbe6093a146ce51cc40747bd23ab58f.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "near-common.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-lookup-role-311843862895-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "near-localnet-common"
+      },
+      "dependencies": [
+        "near-common.assets"
+      ],
+      "metadata": {
+        "/near-common": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "Architecture",
+                "Value": "MultiStack"
+              },
+              {
+                "Key": "Project",
+                "Value": "AWSNearLocalnet"
+              }
+            ]
+          }
+        ],
+        "/near-common/NearVpc/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpc17ED9B68"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1SubnetD881C8CB"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1RouteTable747F7DDB"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1RouteTableAssociation95395CD8"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1DefaultRouteF19DE171"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/EIP": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1EIPB6C33299"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet1/NATGateway": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet1NATGateway46691DD0"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet2SubnetB04D0CC4"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet2RouteTable76BF65CA"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet2RouteTableAssociationC52FE97E"
+          }
+        ],
+        "/near-common/NearVpc/PublicSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPublicSubnet2DefaultRoute150CC9AA"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet1/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet1SubnetE647D3D1"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet1/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet1RouteTable4251C15C"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet1/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet1RouteTableAssociationDA627129"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet1/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet1DefaultRoute9463E10D"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet2/Subnet": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet2/RouteTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet2RouteTable856E0B03"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet2/RouteTableAssociation": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet2RouteTableAssociationB57FEB65"
+          }
+        ],
+        "/near-common/NearVpc/PrivateSubnet2/DefaultRoute": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcPrivateSubnet2DefaultRoute0D7EEA32"
+          }
+        ],
+        "/near-common/NearVpc/IGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcIGWE15063E9"
+          }
+        ],
+        "/near-common/NearVpc/VPCGW": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcVPCGWF140488B"
+          }
+        ],
+        "/near-common/NearVpc/SSMEndpoint/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcSSMEndpointSecurityGroup331F7B95"
+          }
+        ],
+        "/near-common/NearVpc/SSMEndpoint/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcSSMEndpoint3BD57E66"
+          }
+        ],
+        "/near-common/NearVpc/SSMMessagesEndpoint/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcSSMMessagesEndpointSecurityGroup1D2CE1B5"
+          }
+        ],
+        "/near-common/NearVpc/SSMMessagesEndpoint/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcSSMMessagesEndpoint06C1042C"
+          }
+        ],
+        "/near-common/NearVpc/EC2MessagesEndpoint/SecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcEC2MessagesEndpointSecurityGroup1BCA66F4"
+          }
+        ],
+        "/near-common/NearVpc/EC2MessagesEndpoint/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearVpcEC2MessagesEndpoint7BADCC32"
+          }
+        ],
+        "/near-common/NearNodeSecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearNodeSecurityGroup8025226D"
+          }
+        ],
+        "/near-common/NearNodeRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearNodeRole5BF1752D"
+          }
+        ],
+        "/near-common/NearNodeRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearNodeRoleDefaultPolicyD9A01D49"
+          }
+        ],
+        "/near-common/InstanceRoleArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InstanceRoleArn"
+          }
+        ],
+        "/near-common/VpcId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "VpcId"
+          }
+        ],
+        "/near-common/SecurityGroupId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SecurityGroupId"
+          }
+        ],
+        "/near-common/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/near-common/Exports/Output{\"Ref\":\"NearNodeRole5BF1752D\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefNearNodeRole5BF1752D644CF4FE"
+          }
+        ],
+        "/near-common/Exports/Output{\"Fn::GetAtt\":[\"NearNodeSecurityGroup8025226D\",\"GroupId\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018"
+          }
+        ],
+        "/near-common/Exports/Output{\"Ref\":\"NearVpcPublicSubnet1SubnetD881C8CB\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF"
+          }
+        ],
+        "/near-common/Exports/Output{\"Fn::GetAtt\":[\"NearVpc17ED9B68\",\"CidrBlock\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339"
+          }
+        ],
+        "/near-common/Exports/Output{\"Ref\":\"NearVpc17ED9B68\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefNearVpc17ED9B68D255C35F"
+          }
+        ],
+        "/near-common/Exports/Output{\"Ref\":\"NearVpcPrivateSubnet1SubnetE647D3D1\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E"
+          }
+        ],
+        "/near-common/Exports/Output{\"Ref\":\"NearVpcPrivateSubnet2SubnetDDB4FE3B\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24"
+          }
+        ],
+        "/near-common/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/near-common/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "near-common"
+    },
+    "near-infrastructure.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "near-infrastructure.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "near-infrastructure": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://311843862895/us-east-1",
+      "properties": {
+        "templateFile": "near-infrastructure.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Architecture": "MultiStack",
+          "Project": "AWSNearLocalnet"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/45da09e87ac7b9c8140a3d4b74efd4c718aacabdb0e91cd6c9287f6ae1206e7a.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "near-infrastructure.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-lookup-role-311843862895-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "near-localnet-infrastructure"
+      },
+      "dependencies": [
+        "near-common",
+        "near-infrastructure.assets"
+      ],
+      "metadata": {
+        "/near-infrastructure": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "Architecture",
+                "Value": "MultiStack"
+              },
+              {
+                "Key": "Project",
+                "Value": "AWSNearLocalnet"
+              }
+            ]
+          }
+        ],
+        "/near-infrastructure/NearLocalnetNode/InstanceProfile": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearLocalnetNodeInstanceProfile6A762CC5"
+          }
+        ],
+        "/near-infrastructure/NearLocalnetNode/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearLocalnetNode7187E002"
+          }
+        ],
+        "/near-infrastructure/SsmParameterValue:--aws--service--canonical--ubuntu--server--24.04--stable--current--amd64--hvm--ebs-gp3--ami-id:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SsmParameterValueawsservicecanonicalubuntuserver2404stablecurrentamd64hvmebsgp3amiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "/near-infrastructure/near-instance-id": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearinstanceid"
+          }
+        ],
+        "/near-infrastructure/near-instance-private-ip": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearinstanceprivateip"
+          }
+        ],
+        "/near-infrastructure/near-instance-public-ip": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearinstancepublicip"
+          }
+        ],
+        "/near-infrastructure/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/near-infrastructure/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/near-infrastructure/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "near-infrastructure"
+    },
+    "near-install.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "near-install.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "near-install": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://311843862895/us-east-1",
+      "properties": {
+        "templateFile": "near-install.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Architecture": "MultiStack",
+          "Project": "AWSNearLocalnet"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/daac6693b025e0b1419eae839462eb3277830d8c18e2c805634e34dad396ebe9.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "near-install.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-lookup-role-311843862895-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "near-localnet-install"
+      },
+      "dependencies": [
+        "near-infrastructure",
+        "near-install.assets"
+      ],
+      "metadata": {
+        "/near-install": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "Architecture",
+                "Value": "MultiStack"
+              },
+              {
+                "Key": "Project",
+                "Value": "AWSNearLocalnet"
+              }
+            ]
+          }
+        ],
+        "/near-install/near-validate-install": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearvalidateinstall"
+          }
+        ],
+        "/near-install/near-validate-execution": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearvalidateexecution"
+          }
+        ],
+        "/near-install/install-document-name": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "installdocumentname"
+          }
+        ],
+        "/near-install/install-status": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "installstatus"
+          }
+        ],
+        "/near-install/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/near-install/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/near-install/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "near-install"
+    },
+    "near-sync.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "near-sync.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "near-sync": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://311843862895/us-east-1",
+      "properties": {
+        "templateFile": "near-sync.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Architecture": "MultiStack",
+          "Project": "AWSNearLocalnet"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/089bcf3e11eadfb8b83c2a685369991dc19f53b6b44c85b2580d784bca91ec93.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "near-sync.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-lookup-role-311843862895-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "near-localnet-sync"
+      },
+      "dependencies": [
+        "near-install",
+        "near-sync.assets"
+      ],
+      "metadata": {
+        "/near-sync": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "Architecture",
+                "Value": "MultiStack"
+              },
+              {
+                "Key": "Project",
+                "Value": "AWSNearLocalnet"
+              }
+            ]
+          }
+        ],
+        "/near-sync/near-validate-service": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearvalidateservice"
+          }
+        ],
+        "/near-sync/near-validate-service-execution": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearvalidateserviceexecution"
+          }
+        ],
+        "/near-sync/near-localnet-dashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearlocalnetdashboard990901BA"
+          }
+        ],
+        "/near-sync/sync-status": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "syncstatus"
+          }
+        ],
+        "/near-sync/near-rpc-url": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearrpcurl"
+          }
+        ],
+        "/near-sync/near-network-id": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "nearnetworkid"
+          }
+        ],
+        "/near-sync/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/near-sync/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/near-sync/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "near-sync"
+    },
+    "near-test.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "near-test.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "near-test": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://311843862895/us-east-1",
+      "properties": {
+        "templateFile": "near-test.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "Architecture": "MultiStack",
+          "Project": "AWSNearLocalnet"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/5d01f1bf15f68abefe59c1f070b9d84a7f44c7599d7e454fb66f6a0e05c28de1.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "near-test.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-lookup-role-311843862895-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        },
+        "stackName": "near-localnet-test"
+      },
+      "dependencies": [
+        "near-sync",
+        "near-common",
+        "near-test.assets"
+      ],
+      "metadata": {
+        "/near-test": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "Architecture",
+                "Value": "MultiStack"
+              },
+              {
+                "Key": "Project",
+                "Value": "AWSNearLocalnet"
+              }
+            ]
+          }
+        ],
+        "/near-test/TestLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLogGroup4EEF7AD4"
+          }
+        ],
+        "/near-test/TestLambdaRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLambdaRoleC771CE80"
+          }
+        ],
+        "/near-test/TestLambdaRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLambdaRoleDefaultPolicy7616C22F"
+          }
+        ],
+        "/near-test/TestLambdaSecurityGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLambdaSecurityGroupB2333BAC"
+          }
+        ],
+        "/near-test/TestFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestFunction22AD90FC"
+          }
+        ],
+        "/near-test/NearTestTrigger": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NearTestTrigger"
+          }
+        ],
+        "/near-test/TestCustomResource": [
+          {
+            "type": "aws:cdk:warning",
+            "data": "installLatestAwsSdk was not specified, and defaults to true. You probably do not want this. Set the global context flag '@aws-cdk/customresources:installLatestAwsSdkDefault' to false to switch this behavior off project-wide, or set the property explicitly to true if you know you need to call APIs that are not in Lambda's built-in SDK version. [ack: @aws-cdk/custom-resources:installLatestAwsSdkNotSpecified]",
+            "trace": [
+              "Annotations.addMessage (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/aws-cdk-lib/core/lib/annotations.js:1:2066)",
+              "Annotations.addWarningV2 (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/aws-cdk-lib/core/lib/annotations.js:1:984)",
+              "new AwsCustomResource2 (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/aws-cdk-lib/custom-resources/lib/aws-custom-resource/aws-custom-resource.js:1:7936)",
+              "new AwsCustomResource2 (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/aws-cdk-lib/core/lib/prop-injectable.js:1:681)",
+              "new NearTestStack (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/lib/test-stack.ts:203:36)",
+              "Object.<anonymous> (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/app.ts:80:19)",
+              "Module._compile (node:internal/modules/cjs/loader:1734:14)",
+              "Module.m._compile (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/index.ts:1618:23)",
+              "loadTS (node:internal/modules/cjs/loader:1826:10)",
+              "Object.require.extensions.<computed> [as .ts] (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/index.ts:1621:12)",
+              "Module.load (node:internal/modules/cjs/loader:1469:32)",
+              "Module._load (node:internal/modules/cjs/loader:1286:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:152:5)",
+              "phase4 (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/bin.ts:649:14)",
+              "bootstrap (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/bin.ts:95:10)",
+              "main (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/bin.ts:55:10)",
+              "Object.<anonymous> (/Users/Shai.Perednik/Documents/code_workspace/near_mobile/AWSNodeRunner/lib/near/node_modules/ts-node/src/bin.ts:800:3)",
+              "Module._compile (node:internal/modules/cjs/loader:1734:14)",
+              "Object..js (node:internal/modules/cjs/loader:1899:10)",
+              "Module.load (node:internal/modules/cjs/loader:1469:32)",
+              "Module._load (node:internal/modules/cjs/loader:1286:12)",
+              "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
+              "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
+              "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:152:5)",
+              "node:internal/main/run_main_module:33:47"
+            ]
+          }
+        ],
+        "/near-test/TestCustomResource/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestCustomResourceD87F6779"
+          }
+        ],
+        "/near-test/TestCustomResource/CustomResourcePolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestCustomResourceCustomResourcePolicy0CDB19D4"
+          }
+        ],
+        "/near-test/AWS679f53fac002430cb0da5b7982bd2287": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 0
+          }
+        ],
+        "/near-test/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+          }
+        ],
+        "/near-test/AWS679f53fac002430cb0da5b7982bd2287/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWS679f53fac002430cb0da5b7982bd22872D164C4C"
+          }
+        ],
+        "/near-test/TestDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestDashboard61924B16"
+          }
+        ],
+        "/near-test/TestLambdaArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLambdaArn"
+          }
+        ],
+        "/near-test/TestSsmDocumentName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestSsmDocumentName"
+          }
+        ],
+        "/near-test/TestLogGroupName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestLogGroupName"
+          }
+        ],
+        "/near-test/TestDashboardUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestDashboardUrl"
+          }
+        ],
+        "/near-test/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/near-test/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/near-test/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "near-test"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "aws-cdk-lib/feature-flag-report": {
+      "type": "cdk:feature-flag-report",
+      "properties": {
+        "module": "aws-cdk-lib",
+        "flags": {
+          "@aws-cdk/aws-signer:signingProfileNamePassedToCfn": {
+            "recommendedValue": true,
+            "explanation": "Pass signingProfileName to CfnSigningProfile"
+          },
+          "@aws-cdk/core:newStyleStackSynthesis": {
+            "recommendedValue": true,
+            "explanation": "Switch to new stack synthesis method which enables CI/CD",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/core:stackRelativeExports": {
+            "recommendedValue": true,
+            "explanation": "Name exports based on the construct paths relative to the stack, rather than the global construct path",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-ecs-patterns:secGroupsDisablesImplicitOpenListener": {
+            "recommendedValue": true,
+            "explanation": "Disable implicit openListener when custom security groups are provided"
+          },
+          "@aws-cdk/aws-rds:lowercaseDbIdentifier": {
+            "recommendedValue": true,
+            "explanation": "Force lowercasing of RDS Cluster names in CDK",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": {
+            "recommendedValue": true,
+            "explanation": "Allow adding/removing multiple UsagePlanKeys independently",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-lambda:recognizeVersionProps": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature flag to opt in to the updated logical id calculation for Lambda Version created using the  `fn.currentVersion`.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-lambda:recognizeLayerVersion": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature flag to opt in to the updated logical id calculation for Lambda Version created using the `fn.currentVersion`."
+          },
+          "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature flag to have cloudfront distributions use the security policy TLSv1.2_2021 by default.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/core:checkSecretUsage": {
+            "recommendedValue": true,
+            "explanation": "Enable this flag to make it impossible to accidentally use SecretValues in unsafe locations"
+          },
+          "@aws-cdk/core:target-partitions": {
+            "recommendedValue": [
+              "aws",
+              "aws-cn"
+            ],
+            "explanation": "What regions to include in lookup tables of environment agnostic stacks"
+          },
+          "@aws-cdk-containers/ecs-service-extensions:enableDefaultLogDriver": {
+            "recommendedValue": true,
+            "explanation": "ECS extensions will automatically add an `awslogs` driver if no logging is specified"
+          },
+          "@aws-cdk/aws-ec2:uniqueImdsv2TemplateName": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature flag to have Launch Templates generated by the `InstanceRequireImdsv2Aspect` use unique names."
+          },
+          "@aws-cdk/aws-ecs:arnFormatIncludesClusterName": {
+            "recommendedValue": true,
+            "explanation": "ARN format used by ECS. In the new ARN format, the cluster name is part of the resource ID."
+          },
+          "@aws-cdk/aws-iam:minimizePolicies": {
+            "recommendedValue": true,
+            "explanation": "Minimize IAM policies by combining Statements"
+          },
+          "@aws-cdk/core:validateSnapshotRemovalPolicy": {
+            "recommendedValue": true,
+            "explanation": "Error on snapshot removal policies on resources that do not support it."
+          },
+          "@aws-cdk/aws-codepipeline:crossAccountKeyAliasStackSafeResourceName": {
+            "recommendedValue": true,
+            "explanation": "Generate key aliases that include the stack name"
+          },
+          "@aws-cdk/aws-s3:createDefaultLoggingPolicy": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature flag to create an S3 bucket policy by default in cases where an AWS service would automatically create the Policy if one does not exist."
+          },
+          "@aws-cdk/aws-sns-subscriptions:restrictSqsDescryption": {
+            "recommendedValue": true,
+            "explanation": "Restrict KMS key policy for encrypted Queues a bit more"
+          },
+          "@aws-cdk/aws-apigateway:disableCloudWatchRole": {
+            "recommendedValue": true,
+            "explanation": "Make default CloudWatch Role behavior safe for multiple API Gateways in one environment"
+          },
+          "@aws-cdk/core:enablePartitionLiterals": {
+            "recommendedValue": true,
+            "explanation": "Make ARNs concrete if AWS partition is known"
+          },
+          "@aws-cdk/aws-events:eventsTargetQueueSameAccount": {
+            "recommendedValue": true,
+            "explanation": "Event Rules may only push to encrypted SQS queues in the same account"
+          },
+          "@aws-cdk/aws-ecs:disableExplicitDeploymentControllerForCircuitBreaker": {
+            "recommendedValue": true,
+            "explanation": "Avoid setting the \"ECS\" deployment controller when adding a circuit breaker"
+          },
+          "@aws-cdk/aws-iam:importedRoleStackSafeDefaultPolicyName": {
+            "recommendedValue": true,
+            "explanation": "Enable this feature to create default policy names for imported roles that depend on the stack the role is in."
+          },
+          "@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy": {
+            "recommendedValue": true,
+            "explanation": "Use S3 Bucket Policy instead of ACLs for Server Access Logging"
+          },
+          "@aws-cdk/aws-route53-patters:useCertificate": {
+            "recommendedValue": true,
+            "explanation": "Use the official `Certificate` resource instead of `DnsValidatedCertificate`"
+          },
+          "@aws-cdk/customresources:installLatestAwsSdkDefault": {
+            "recommendedValue": false,
+            "explanation": "Whether to install the latest SDK by default in AwsCustomResource"
+          },
+          "@aws-cdk/aws-rds:databaseProxyUniqueResourceName": {
+            "recommendedValue": true,
+            "explanation": "Use unique resource name for Database Proxy"
+          },
+          "@aws-cdk/aws-codedeploy:removeAlarmsFromDeploymentGroup": {
+            "recommendedValue": true,
+            "explanation": "Remove CloudWatch alarms from deployment group"
+          },
+          "@aws-cdk/aws-apigateway:authorizerChangeDeploymentLogicalId": {
+            "recommendedValue": true,
+            "explanation": "Include authorizer configuration in the calculation of the API deployment logical ID."
+          },
+          "@aws-cdk/aws-ec2:launchTemplateDefaultUserData": {
+            "recommendedValue": true,
+            "explanation": "Define user data for a launch template by default when a machine image is provided."
+          },
+          "@aws-cdk/aws-secretsmanager:useAttachedSecretResourcePolicyForSecretTargetAttachments": {
+            "recommendedValue": true,
+            "explanation": "SecretTargetAttachments uses the ResourcePolicy of the attached Secret."
+          },
+          "@aws-cdk/aws-redshift:columnId": {
+            "recommendedValue": true,
+            "explanation": "Whether to use an ID to track Redshift column changes"
+          },
+          "@aws-cdk/aws-stepfunctions-tasks:enableEmrServicePolicyV2": {
+            "recommendedValue": true,
+            "explanation": "Enable AmazonEMRServicePolicy_v2 managed policies"
+          },
+          "@aws-cdk/aws-ec2:restrictDefaultSecurityGroup": {
+            "recommendedValue": true,
+            "explanation": "Restrict access to the VPC default security group"
+          },
+          "@aws-cdk/aws-apigateway:requestValidatorUniqueId": {
+            "recommendedValue": true,
+            "explanation": "Generate a unique id for each RequestValidator added to a method"
+          },
+          "@aws-cdk/aws-kms:aliasNameRef": {
+            "recommendedValue": true,
+            "explanation": "KMS Alias name and keyArn will have implicit reference to KMS Key"
+          },
+          "@aws-cdk/aws-kms:applyImportedAliasPermissionsToPrincipal": {
+            "recommendedValue": true,
+            "explanation": "Enable grant methods on Aliases imported by name to use kms:ResourceAliases condition"
+          },
+          "@aws-cdk/aws-autoscaling:generateLaunchTemplateInsteadOfLaunchConfig": {
+            "recommendedValue": true,
+            "explanation": "Generate a launch template when creating an AutoScalingGroup"
+          },
+          "@aws-cdk/core:includePrefixInUniqueNameGeneration": {
+            "recommendedValue": true,
+            "explanation": "Include the stack prefix in the stack name generation process"
+          },
+          "@aws-cdk/aws-efs:denyAnonymousAccess": {
+            "recommendedValue": true,
+            "explanation": "EFS denies anonymous clients accesses"
+          },
+          "@aws-cdk/aws-opensearchservice:enableOpensearchMultiAzWithStandby": {
+            "recommendedValue": true,
+            "explanation": "Enables support for Multi-AZ with Standby deployment for opensearch domains"
+          },
+          "@aws-cdk/aws-lambda-nodejs:useLatestRuntimeVersion": {
+            "recommendedValue": true,
+            "explanation": "Enables aws-lambda-nodejs.Function to use the latest available NodeJs runtime as the default"
+          },
+          "@aws-cdk/aws-efs:mountTargetOrderInsensitiveLogicalId": {
+            "recommendedValue": true,
+            "explanation": "When enabled, mount targets will have a stable logicalId that is linked to the associated subnet."
+          },
+          "@aws-cdk/aws-rds:auroraClusterChangeScopeOfInstanceParameterGroupWithEachParameters": {
+            "recommendedValue": true,
+            "explanation": "When enabled, a scope of InstanceParameterGroup for AuroraClusterInstance with each parameters will change."
+          },
+          "@aws-cdk/aws-appsync:useArnForSourceApiAssociationIdentifier": {
+            "recommendedValue": true,
+            "explanation": "When enabled, will always use the arn for identifiers for CfnSourceApiAssociation in the GraphqlApi construct rather than id."
+          },
+          "@aws-cdk/aws-rds:preventRenderingDeprecatedCredentials": {
+            "recommendedValue": true,
+            "explanation": "When enabled, creating an RDS database cluster from a snapshot will only render credentials for snapshot credentials."
+          },
+          "@aws-cdk/aws-codepipeline-actions:useNewDefaultBranchForCodeCommitSource": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the CodeCommit source action is using the default branch name 'main'."
+          },
+          "@aws-cdk/aws-cloudwatch-actions:changeLambdaPermissionLogicalIdForLambdaAction": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the logical ID of a Lambda permission for a Lambda action includes an alarm ID."
+          },
+          "@aws-cdk/aws-codepipeline:crossAccountKeysDefaultValueToFalse": {
+            "recommendedValue": true,
+            "explanation": "Enables Pipeline to set the default value for crossAccountKeys to false."
+          },
+          "@aws-cdk/aws-codepipeline:defaultPipelineTypeToV2": {
+            "recommendedValue": true,
+            "explanation": "Enables Pipeline to set the default pipeline type to V2."
+          },
+          "@aws-cdk/aws-kms:reduceCrossAccountRegionPolicyScope": {
+            "recommendedValue": true,
+            "explanation": "When enabled, IAM Policy created from KMS key grant will reduce the resource scope to this key only."
+          },
+          "@aws-cdk/pipelines:reduceAssetRoleTrustScope": {
+            "recommendedValue": true,
+            "explanation": "Remove the root account principal from PipelineAssetsFileRole trust policy",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-eks:nodegroupNameAttribute": {
+            "recommendedValue": true,
+            "explanation": "When enabled, nodegroupName attribute of the provisioned EKS NodeGroup will not have the cluster name prefix."
+          },
+          "@aws-cdk/aws-ec2:ebsDefaultGp3Volume": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the default volume type of the EBS volume will be GP3"
+          },
+          "@aws-cdk/aws-ecs:removeDefaultDeploymentAlarm": {
+            "recommendedValue": true,
+            "explanation": "When enabled, remove default deployment alarm settings"
+          },
+          "@aws-cdk/custom-resources:logApiResponseDataPropertyTrueDefault": {
+            "recommendedValue": false,
+            "explanation": "When enabled, the custom resource used for `AwsCustomResource` will configure the `logApiResponseData` property as true by default"
+          },
+          "@aws-cdk/aws-s3:keepNotificationInImportedBucket": {
+            "recommendedValue": false,
+            "explanation": "When enabled, Adding notifications to a bucket in the current stack will not remove notification from imported stack."
+          },
+          "@aws-cdk/aws-stepfunctions-tasks:useNewS3UriParametersForBedrockInvokeModelTask": {
+            "recommendedValue": true,
+            "explanation": "When enabled, use new props for S3 URI field in task definition of state machine for bedrock invoke model.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/core:explicitStackTags": {
+            "recommendedValue": true,
+            "explanation": "When enabled, stack tags need to be assigned explicitly on a Stack."
+          },
+          "@aws-cdk/aws-ecs:enableImdsBlockingDeprecatedFeature": {
+            "recommendedValue": false,
+            "explanation": "When set to true along with canContainersAccessInstanceRole=false in ECS cluster, new updated commands will be added to UserData to block container accessing IMDS. **Applicable to Linux only. IMPORTANT: See [details.](#aws-cdkaws-ecsenableImdsBlockingDeprecatedFeature)**"
+          },
+          "@aws-cdk/aws-ecs:disableEcsImdsBlocking": {
+            "recommendedValue": true,
+            "explanation": "When set to true, CDK synth will throw exception if canContainersAccessInstanceRole is false. **IMPORTANT: See [details.](#aws-cdkaws-ecsdisableEcsImdsBlocking)**"
+          },
+          "@aws-cdk/aws-ecs:reduceEc2FargateCloudWatchPermissions": {
+            "recommendedValue": true,
+            "explanation": "When enabled, we will only grant the necessary permissions when users specify cloudwatch log group through logConfiguration"
+          },
+          "@aws-cdk/aws-dynamodb:resourcePolicyPerReplica": {
+            "recommendedValue": true,
+            "explanation": "When enabled will allow you to specify a resource policy per replica, and not copy the source table policy to all replicas"
+          },
+          "@aws-cdk/aws-ec2:ec2SumTImeoutEnabled": {
+            "recommendedValue": true,
+            "explanation": "When enabled, initOptions.timeout and resourceSignalTimeout values will be summed together."
+          },
+          "@aws-cdk/aws-appsync:appSyncGraphQLAPIScopeLambdaPermission": {
+            "recommendedValue": true,
+            "explanation": "When enabled, a Lambda authorizer Permission created when using GraphqlApi will be properly scoped with a SourceArn."
+          },
+          "@aws-cdk/aws-rds:setCorrectValueForDatabaseInstanceReadReplicaInstanceResourceId": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the value of property `instanceResourceId` in construct `DatabaseInstanceReadReplica` will be set to the correct value which is `DbiResourceId` instead of currently `DbInstanceArn`"
+          },
+          "@aws-cdk/core:cfnIncludeRejectComplexResourceUpdateCreatePolicyIntrinsics": {
+            "recommendedValue": true,
+            "explanation": "When enabled, CFN templates added with `cfn-include` will error if the template contains Resource Update or Create policies with CFN Intrinsics that include non-primitive values."
+          },
+          "@aws-cdk/aws-lambda-nodejs:sdkV3ExcludeSmithyPackages": {
+            "recommendedValue": true,
+            "explanation": "When enabled, both `@aws-sdk` and `@smithy` packages will be excluded from the Lambda Node.js 18.x runtime to prevent version mismatches in bundled applications."
+          },
+          "@aws-cdk/aws-stepfunctions-tasks:fixRunEcsTaskPolicy": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the resource of IAM Run Ecs policy generated by SFN EcsRunTask will reference the definition, instead of constructing ARN."
+          },
+          "@aws-cdk/aws-ec2:bastionHostUseAmazonLinux2023ByDefault": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the BastionHost construct will use the latest Amazon Linux 2023 AMI, instead of Amazon Linux 2."
+          },
+          "@aws-cdk/core:aspectStabilization": {
+            "recommendedValue": true,
+            "explanation": "When enabled, a stabilization loop will be run when invoking Aspects during synthesis.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-route53-targets:userPoolDomainNameMethodWithoutCustomResource": {
+            "recommendedValue": true,
+            "explanation": "When enabled, use a new method for DNS Name of user pool domain target without creating a custom resource."
+          },
+          "@aws-cdk/aws-elasticloadbalancingV2:albDualstackWithoutPublicIpv4SecurityGroupRulesDefault": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the default security group ingress rules will allow IPv6 ingress from anywhere"
+          },
+          "@aws-cdk/aws-iam:oidcRejectUnauthorizedConnections": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the default behaviour of OIDC provider will reject unauthorized connections"
+          },
+          "@aws-cdk/core:enableAdditionalMetadataCollection": {
+            "recommendedValue": true,
+            "explanation": "When enabled, CDK will expand the scope of usage data collected to better inform CDK development and improve communication for security concerns and emerging issues."
+          },
+          "@aws-cdk/aws-lambda:createNewPoliciesWithAddToRolePolicy": {
+            "recommendedValue": false,
+            "explanation": "[Deprecated] When enabled, Lambda will create new inline policies with AddToRolePolicy instead of adding to the Default Policy Statement"
+          },
+          "@aws-cdk/aws-s3:setUniqueReplicationRoleName": {
+            "recommendedValue": true,
+            "explanation": "When enabled, CDK will automatically generate a unique role name that is used for s3 object replication."
+          },
+          "@aws-cdk/pipelines:reduceStageRoleTrustScope": {
+            "recommendedValue": true,
+            "explanation": "Remove the root account principal from Stage addActions trust policy",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-events:requireEventBusPolicySid": {
+            "recommendedValue": true,
+            "explanation": "When enabled, grantPutEventsTo() will use resource policies with Statement IDs for service principals."
+          },
+          "@aws-cdk/core:aspectPrioritiesMutating": {
+            "recommendedValue": true,
+            "explanation": "When set to true, Aspects added by the construct library on your behalf will be given a priority of MUTATING."
+          },
+          "@aws-cdk/aws-dynamodb:retainTableReplica": {
+            "recommendedValue": true,
+            "explanation": "When enabled, table replica will be default to the removal policy of source table unless specified otherwise."
+          },
+          "@aws-cdk/cognito:logUserPoolClientSecretValue": {
+            "recommendedValue": false,
+            "explanation": "When disabled, the value of the user pool client secret will not be logged in the custom resource lambda function logs."
+          },
+          "@aws-cdk/pipelines:reduceCrossAccountActionRoleTrustScope": {
+            "recommendedValue": true,
+            "explanation": "When enabled, scopes down the trust policy for the cross-account action role",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-stepfunctions:useDistributedMapResultWriterV2": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the resultWriterV2 property of DistributedMap will be used insted of resultWriter"
+          },
+          "@aws-cdk/s3-notifications:addS3TrustKeyPolicyForSnsSubscriptions": {
+            "recommendedValue": true,
+            "explanation": "Add an S3 trust policy to a KMS key resource policy for SNS subscriptions."
+          },
+          "@aws-cdk/aws-ec2:requirePrivateSubnetsForEgressOnlyInternetGateway": {
+            "recommendedValue": true,
+            "explanation": "When enabled, the EgressOnlyGateway resource is only created if private subnets are defined in the dual-stack VPC."
+          },
+          "@aws-cdk/aws-ec2-alpha:useResourceIdForVpcV2Migration": {
+            "recommendedValue": false,
+            "explanation": "When enabled, use resource IDs for VPC V2 migration"
+          },
+          "@aws-cdk/aws-s3:publicAccessBlockedByDefault": {
+            "recommendedValue": true,
+            "explanation": "When enabled, setting any combination of options for BlockPublicAccess will automatically set true for any options not defined."
+          },
+          "@aws-cdk/aws-lambda:useCdkManagedLogGroup": {
+            "recommendedValue": true,
+            "explanation": "When enabled, CDK creates and manages loggroup for the lambda function"
+          },
+          "@aws-cdk/aws-elasticloadbalancingv2:networkLoadBalancerWithSecurityGroupByDefault": {
+            "recommendedValue": true,
+            "explanation": "When enabled, Network Load Balancer will be created with a security group by default."
+          },
+          "@aws-cdk/aws-stepfunctions-tasks:httpInvokeDynamicJsonPathEndpoint": {
+            "recommendedValue": true,
+            "explanation": "When enabled, allows using a dynamic apiEndpoint with JSONPath format in HttpInvoke tasks.",
+            "unconfiguredBehavesLike": {
+              "v2": true
+            }
+          },
+          "@aws-cdk/aws-ecs-patterns:uniqueTargetGroupId": {
+            "recommendedValue": true,
+            "explanation": "When enabled, ECS patterns will generate unique target group IDs to prevent conflicts during load balancer replacement"
+          }
+        }
+      }
+    }
+  },
+  "minimumCliVersion": "2.1031.1"
+}

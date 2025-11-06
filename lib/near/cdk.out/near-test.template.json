@@ -1,0 +1,848 @@
+{
+ "Description": "NEAR Localnet Test Stack - Functional test suite",
+ "Resources": {
+  "TestLogGroup4EEF7AD4": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/near-localnet-test",
+    "RetentionInDays": 7,
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestLogGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestLambdaRoleC771CE80": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestLambdaRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestLambdaRoleDefaultPolicy7616C22F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "cloudwatch:PutMetricData",
+       "Condition": {
+        "StringEquals": {
+         "cloudwatch:namespace": "NEAR/Test"
+        }
+       },
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "TestLambdaRoleDefaultPolicy7616C22F",
+    "Roles": [
+     {
+      "Ref": "TestLambdaRoleC771CE80"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestLambdaRole/DefaultPolicy/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestLambdaSecurityGroupB2333BAC": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for NEAR test Lambda function",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::ImportValue": "near-localnet-common:ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339"
+      },
+      "Description": "Allow access to NEAR RPC endpoint",
+      "FromPort": 3030,
+      "IpProtocol": "tcp",
+      "ToPort": 3030
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "near-localnet-common:ExportsOutputRefNearVpc17ED9B68D255C35F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestLambdaSecurityGroup/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestFunction22AD90FC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-311843862895-us-east-1",
+     "S3Key": "cd25904e2a9167f75ffb2aa789bdf458eb9870cb80300e1ade948cbdb5167fd0.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "RPC_URL": {
+       "Fn::Join": [
+        "",
+        [
+         "http://",
+         {
+          "Fn::ImportValue": "NearLocalnetInstancePrivateIp"
+         },
+         ":3030"
+        ]
+       ]
+      },
+      "NETWORK_ID": "localnet",
+      "INCLUDE_WRITE_TESTS": "false",
+      "TEST_DEPTH": "basic",
+      "INSTANCE_ID": {
+       "Fn::ImportValue": "NearLocalnetInstanceId"
+      },
+      "VALIDATOR_KEY_JSON": "{\n  \"account_id\": \"node0\",\n  \"public_key\": \"ed25519:7PGseFbWxvYVgZ89K1uTJKYoKetWs7BJtbyXDzfbAcqX\",\n  \"secret_key\": \"ed25519:3D4YudUQRE39Lc4JHghuB5WM8kbgDDa34mnrEP5DdTApVH81af7e2dWgNPEaiQfdJnZq1CNPp5im4Rg5b733oiMP\"\n}"
+     }
+    },
+    "FunctionName": "near-localnet-test",
+    "Handler": "handler.handler",
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "TestLogGroup4EEF7AD4"
+     }
+    },
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "TestLambdaRoleC771CE80",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "Timeout": 600,
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      {
+       "Fn::GetAtt": [
+        "TestLambdaSecurityGroupB2333BAC",
+        "GroupId"
+       ]
+      }
+     ],
+     "SubnetIds": [
+      {
+       "Fn::ImportValue": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E"
+      },
+      {
+       "Fn::ImportValue": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24"
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "TestLambdaRoleDefaultPolicy7616C22F",
+    "TestLambdaRoleC771CE80"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestFunction/Resource",
+    "aws:asset:path": "asset.cd25904e2a9167f75ffb2aa789bdf458eb9870cb80300e1ade948cbdb5167fd0",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "NearTestTrigger": {
+   "Type": "AWS::SSM::Document",
+   "Properties": {
+    "Content": {
+     "schemaVersion": "2.2",
+     "description": "Trigger NEAR localnet functional tests via Lambda",
+     "parameters": {
+      "functionArn": {
+       "type": "String",
+       "description": "Lambda function ARN",
+       "default": {
+        "Fn::GetAtt": [
+         "TestFunction22AD90FC",
+         "Arn"
+        ]
+       }
+      },
+      "includeWriteTests": {
+       "type": "String",
+       "description": "Include write tests",
+       "default": "false"
+      },
+      "testDepth": {
+       "type": "String",
+       "description": "Test depth (basic or comprehensive)",
+       "default": "basic"
+      }
+     },
+     "mainSteps": [
+      {
+       "action": "aws:runShellScript",
+       "name": "invokeTestLambda",
+       "inputs": {
+        "timeoutSeconds": "600",
+        "runCommand": [
+         "#!/bin/bash",
+         "set -euo pipefail",
+         "echo '[TEST-TRIGGER] Invoking test Lambda function...'",
+         "",
+         "FUNCTION_ARN=\"{{functionArn}}\"",
+         "INCLUDE_WRITE_TESTS=\"{{includeWriteTests}}\"",
+         "TEST_DEPTH=\"{{testDepth}}\"",
+         "",
+         "# Invoke Lambda function",
+         "RESPONSE=$(aws lambda invoke \\",
+         "  --function-name \"$FUNCTION_ARN\" \\",
+         "  --payload \"{\\\"includeWriteTests\\\": \\\"$INCLUDE_WRITE_TESTS\\\", \\\"testDepth\\\": \\\"$TEST_DEPTH\\\"}\" \\",
+         "  --cli-binary-format raw-in-base64-out \\",
+         "  /tmp/lambda-response.json 2>&1)",
+         "",
+         "if [ $? -ne 0 ]; then",
+         "  echo '[TEST-TRIGGER] ERROR: Failed to invoke Lambda'",
+         "  echo \"$RESPONSE\"",
+         "  exit 1",
+         "fi",
+         "",
+         "# Check Lambda response",
+         "if [ -f /tmp/lambda-response.json ]; then",
+         "  EXIT_CODE=$(jq -r '.FunctionError // empty' /tmp/lambda-response.json || echo '')",
+         "  if [ -n \"$EXIT_CODE\" ]; then",
+         "    echo '[TEST-TRIGGER] ERROR: Lambda function error'",
+         "    cat /tmp/lambda-response.json",
+         "    exit 1",
+         "  fi",
+         "fi",
+         "",
+         "# Wait for Lambda to complete and check logs",
+         "echo '[TEST-TRIGGER] Waiting for test completion...'",
+         "sleep 30",
+         "",
+         "# Get test results from logs",
+         "echo '[TEST-TRIGGER] Test execution completed'",
+         "echo '[TEST-TRIGGER] Check CloudWatch Logs for detailed results'",
+         "",
+         "exit 0"
+        ]
+       }
+      }
+     ]
+    },
+    "DocumentFormat": "YAML",
+    "DocumentType": "Command",
+    "Name": "near-test-trigger-near-localnet-test",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/NearTestTrigger",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestCustomResourceD87F6779": {
+   "Type": "Custom::AWS",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+      "Arn"
+     ]
+    },
+    "Create": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"Lambda\",\"action\":\"invoke\",\"parameters\":{\"FunctionName\":\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1762399419277\"}}"
+      ]
+     ]
+    },
+    "Update": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"service\":\"Lambda\",\"action\":\"invoke\",\"parameters\":{\"FunctionName\":\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1762399419277\"}}"
+      ]
+     ]
+    },
+    "InstallLatestAwsSdk": true
+   },
+   "DependsOn": [
+    "TestCustomResourceCustomResourcePolicy0CDB19D4"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestCustomResource/Resource/Default",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      },
+      {
+       "reason": "AWS managed policies are appropriate for Custom Resource Lambda",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "TestCustomResourceCustomResourcePolicy0CDB19D4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "TestFunction22AD90FC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "TestCustomResourceCustomResourcePolicy0CDB19D4",
+    "Roles": [
+     {
+      "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestCustomResource/CustomResourcePolicy/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      },
+      {
+       "reason": "AWS managed policies are appropriate for Custom Resource Lambda",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/AWS679f53fac002430cb0da5b7982bd2287/ServiceRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-311843862895-us-east-1",
+     "S3Key": "8d5e97812d0036272ba1fd5bb8772ff51f4712e58c75507e4a0db242bf680f1d.zip"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Tags": [
+     {
+      "Key": "Architecture",
+      "Value": "MultiStack"
+     },
+     {
+      "Key": "Project",
+      "Value": "AWSNearLocalnet"
+     }
+    ],
+    "Timeout": 600
+   },
+   "DependsOn": [
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "near-test/AWS679f53fac002430cb0da5b7982bd2287/Resource",
+    "aws:asset:path": "asset.8d5e97812d0036272ba1fd5bb8772ff51f4712e58c75507e4a0db242bf680f1d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "TestDashboard61924B16": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Test Execution Results\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"NEAR/Test\",\"TestsPassed\",\"FunctionName\",\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",{\"label\":\"Tests Passed\",\"stat\":\"Sum\"}],[\"NEAR/Test\",\"TestsFailed\",\"FunctionName\",\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",{\"color\":\"#d62728\",\"label\":\"Tests Failed\",\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Test Duration & RPC Performance\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"NEAR/Test\",\"TestDuration\",\"FunctionName\",\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",{\"label\":\"Test Duration (ms)\"}],[\"NEAR/Test\",\"RpcResponseTime\",\"FunctionName\",\"",
+       {
+        "Ref": "TestFunction22AD90FC"
+       },
+       "\",{\"label\":\"RPC Response Time (ms)\",\"yAxis\":\"right\"}]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "near-localnet-test-near-localnet-test"
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/TestDashboard/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS managed policies are appropriate for Lambda execution roles",
+       "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "CloudWatch PutMetricData requires wildcard for namespace filtering",
+       "id": "AwsSolutions-IAM5"
+      },
+      {
+       "reason": "Security group allows VPC CIDR access for RPC endpoint testing",
+       "id": "AwsSolutions-EC23"
+      },
+      {
+       "reason": "Node.js 20.x is appropriate runtime for Lambda function with near-api-js",
+       "id": "AwsSolutions-L1"
+      }
+     ]
+    }
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/11QW07DMBA8C//uggIXoK3gpxIoPUDkOCZ1Y3sr75qosnx37BQi4Gseu5qRpoGmaeDhTs60UcO0saaHdGSpJlGsLlkcCdIBx9eA8SJ2H/6HZ2Gkg9Si1dVe8B2tUdcqbywLrZqSp1UMhq9rxh8jCytdP0hIL9ErNujry8qPxo9WM65OFvTYSSLNBM8VioZtVJPmrSQtiByUgD2q6LRnoSzGYZasTpD2kk49yjDUilXkLFpNGIPSYkksA4ylVqhIjK4L38fSN9Nu8db//7Is8Yu/Rb5EzsLjoOFM95/NE9S5z2TMJkTPxmlob/gF1V8lK4sBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "near-test/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "TestLambdaArn": {
+   "Description": "ARN of the test Lambda function",
+   "Value": {
+    "Fn::GetAtt": [
+     "TestFunction22AD90FC",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "NearLocalnetTestLambdaArn"
+   }
+  },
+  "TestSsmDocumentName": {
+   "Description": "SSM Document name for triggering tests",
+   "Value": {
+    "Ref": "NearTestTrigger"
+   },
+   "Export": {
+    "Name": "NearLocalnetTestSsmDocumentName"
+   }
+  },
+  "TestLogGroupName": {
+   "Description": "CloudWatch Log Group for test results",
+   "Value": {
+    "Ref": "TestLogGroup4EEF7AD4"
+   },
+   "Export": {
+    "Name": "NearLocalnetTestLogGroup"
+   }
+  },
+  "TestDashboardUrl": {
+   "Description": "CloudWatch Dashboard URL for test metrics",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=",
+      {
+       "Ref": "TestDashboard61924B16"
+      }
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

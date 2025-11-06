@@ -1,0 +1,186 @@
+---
+description: NEAR Protocol specific configuration and deployment patterns
+globs:
+  - "**/*near*.ts"
+  - "**/config/**/*.ts"
+  - "**/assets/**/*.sh"
+alwaysApply: true
+---
+
+# NEAR Protocol Specific Patterns
+
+This project deploys NEAR Protocol blockchain nodes on AWS. Follow these NEAR-specific patterns.
+
+## Architecture Requirements
+
+### CPU Architecture
+
+- **ALWAYS use x86_64 architecture** - NEAR Protocol does not support ARM64
+- Default instance type: `m7a.2xlarge` (configurable, defaults to `t3.large` for development)
+- Instance CPU type: `"x86_64"` (not `"arm64"`)
+- Ubuntu 24.04 LTS AMD64 image: `/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id`
+
+### Network Types
+
+Supported networks via `NearNetwork` type:
+- `"localnet"` - Local development network (default)
+- `"testnet"` - NEAR testnet
+- `"mainnet"` - NEAR mainnet
+
+**Configuration Pattern:**
+```typescript
+nearNetwork: process.env.NEAR_NETWORK || "localnet" as NearNetwork
+```
+
+## NEAR Version Management
+
+### Version Configuration
+
+- Default version: `"2.2.0"` (from nearcore git tag)
+- Configurable via `NEAR_VERSION` environment variable
+- Version used for git checkout: `git checkout ${nearVersion}`
+
+**Pattern:**
+```typescript
+nearVersion: process.env.NEAR_VERSION || "2.2.0"
+```
+
+### Git Checkout Strategy
+
+- Clone from official nearcore repo: `https://github.com/near/nearcore.git`
+- Checkout specific version tag: `git checkout ${nearVersion}`
+- Compile from source: `make neard` (takes ~10-15 minutes)
+
+## NEAR Installation Process
+
+### Dependencies
+
+Required Ubuntu packages for NEAR compilation (installed in UserData):
+- Build tools: `gcc`, `g++`, `cmake`, `clang`, `llvm`, `pkg-config`
+- Development libraries: `libcurl4-openssl-dev`, `zlib1g-dev`, `libdw-dev`, `libiberty-dev`, `libssl-dev`
+- Utilities: `git`, `binutils-dev`, `python3`, `python3-pip`, `protobuf-compiler`
+
+### Rust Installation
+
+- Install Rust as `ubuntu` user: `curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`
+- Source cargo environment: `source ~/.cargo/env`
+- Verify installation: `rustc --version`
+
+### NEAR Compilation
+
+- Clone nearcore to `~/nearcore`
+- Checkout version tag
+- Compile with: `cd ~/nearcore && source ~/.cargo/env && make neard`
+- Binary location: `~/nearcore/target/release/neard`
+
+### Nearup Installation
+
+- Install via pip3: `pip3 install --user --break-system-packages nearup`
+- Required flag for Ubuntu 24.04: `--break-system-packages`
+- Binary location: `~/.local/bin/nearup`
+
+**Pattern:**
+```bash
+su - ubuntu -c "pip3 install --user --break-system-packages nearup"
+```
+
+## NEAR Runtime Configuration
+
+### Nearup Execution
+
+- Run as background process: `nearup run localnet --binary-path ~/nearcore/target/release > /var/log/nearup.log 2>&1 &`
+- Use compiled binary path: `--binary-path ~/nearcore/target/release`
+- Network: `localnet` (for development)
+- Log output: `/var/log/nearup.log`
+
+### RPC Configuration
+
+- Default RPC port: `3030`
+- Access: VPC-only (security group restricts to VPC CIDR)
+- Endpoint format: `http://{instance-private-ip}:3030`
+- Status endpoint: `http://127.0.0.1:3030/status`
+
+### Service Validation
+
+- Check process: `pgrep -f nearup`
+- Validate RPC: `curl http://127.0.0.1:3030/status`
+- Logs: `/var/log/nearup.log` and `/var/log/near-setup.log`
+
+## Configuration Patterns
+
+### Config Interface
+
+Use `NearBaseNodeConfig` interface from `config/node-config.interface.ts`:
+- `instanceType`: EC2 instance type
+- `instanceCpuType`: `"x86_64"` or `"arm64"` (use `"x86_64"`)
+- `nearNetwork`: Network identifier
+- `nearVersion`: Git tag version
+- `dataVolume`: EBS volume configuration
+- `limitOutTrafficMbps`: Network throttling (default: 1000)
+- `rpcPort`: RPC port (default: 3030)
+
+### Base Config
+
+`NearBaseConfig` for AWS environment:
+- `accountId`: AWS account ID (default: `"311843862895"`)
+- `region`: AWS region (default: `"us-east-1"`)
+- `nearNetwork`: Network override via env var
+- `nearVersion`: Version override via env var
+
+### Environment Variable Overrides
+
+Supported environment variables:
+- `AWS_ACCOUNT_ID` - AWS account ID
+- `AWS_REGION` - AWS region
+- `NEAR_NETWORK` - Network (`localnet`, `testnet`, `mainnet`)
+- `NEAR_VERSION` - NEAR version tag (e.g., `"2.2.0"`)
+
+## Volume Requirements
+
+### Storage Configuration
+
+- Minimum volume size: 30GB GP3 (required for Rust compilation artifacts)
+- Default root volume: 30GB GP3 (configurable via `dataVolume.sizeGiB`)
+- Volume type: `gp3` (best performance/cost ratio)
+- Delete on termination: `true` (development environment)
+
+**Pattern:**
+```typescript
+blockDevices: [{
+    deviceName: "/dev/sda1",
+    volume: ec2.BlockDeviceVolume.ebs(dataVolume.sizeGiB, {
+        volumeType: ec2.EbsDeviceVolumeType.GP3,
+        deleteOnTermination: true,
+    }),
+}]
+```
+
+## Logging and Monitoring
+
+### Log Locations
+
+- Setup logs: `/var/log/near-setup.log` (UserData execution)
+- Nearup logs: `/var/log/nearup.log` (NEAR daemon)
+- Initialization marker: `/var/log/near-init-complete.log`
+
+### Log Access
+
+- Via SSM Session Manager: `aws ssm start-session --target {instance-id}`
+- View logs: `sudo tail -f /var/log/near-setup.log`
+- Check status: `curl http://127.0.0.1:3030/status`
+
+## Cross-Stack Integration
+
+### RPC URL Export
+
+- Export RPC URL from sync stack: `NearLocalnetRpcUrl`
+- Format: `http://{private-ip}:3030`
+- Network ID export: `NearLocalnetNetworkId`
+
+### Configuration Export
+
+- Script: `scripts/export-config.ts`
+- Output: `localnet-config.json` and `.env.localnet`
+- Used for cross-chain simulator integration
+
+**Reference:** See @lib/config/localnet-config.ts for configuration and @lib/infrastructure-stack.ts for installation patterns.

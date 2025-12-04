@@ -49,10 +49,19 @@ This CDK application deploys a NEAR localnet node using a multi-stack architectu
 
 ## Prerequisites
 
-- AWS CLI configured with profile `shai-sandbox-profile`
+- AWS CLI configured with a profile (set via `AWS_PROFILE` environment variable)
 - Node.js 18+ and npm
 - AWS CDK v2 installed (`npm install -g aws-cdk`)
 - TypeScript (`npm install -g typescript`)
+
+**Configuration:**
+```bash
+# Set AWS profile via environment variable (recommended)
+export AWS_PROFILE=your-profile-name
+
+# Or add to .env file (not tracked in git)
+echo "AWS_PROFILE=your-profile-name" >> .env
+```
 
 ## Installation
 
@@ -75,11 +84,14 @@ Configuration is managed in `lib/config/localnet-config.ts`. Default values:
 Environment variables can override defaults:
 
 ```bash
+export AWS_PROFILE=your-profile-name  # Required: AWS CLI profile
 export AWS_ACCOUNT_ID=123456789012
 export AWS_REGION=us-east-1
 export NEAR_NETWORK=localnet
 export NEAR_VERSION=2.2.0
 ```
+
+**Note**: The `AWS_PROFILE` environment variable is required for all CDK commands and scripts. Add it to `.env` (not tracked in git) for convenience.
 
 ## Deployment
 
@@ -89,20 +101,20 @@ export NEAR_VERSION=2.2.0
 npm run deploy
 ```
 
-Or manually:
+Or manually (ensure `AWS_PROFILE` is set):
 
 ```bash
-cdk deploy --all --profile shai-sandbox-profile
+cdk deploy --all
 ```
 
 ### Deploy Individual Stacks
 
 ```bash
-# Deploy in order
-cdk deploy near-localnet-common --profile shai-sandbox-profile
-cdk deploy near-localnet-infrastructure --profile shai-sandbox-profile
-cdk deploy near-localnet-install --profile shai-sandbox-profile
-cdk deploy near-localnet-sync --profile shai-sandbox-profile
+# Deploy in order (AWS_PROFILE must be set)
+cdk deploy near-localnet-common
+cdk deploy near-localnet-infrastructure
+cdk deploy near-localnet-install
+cdk deploy near-localnet-sync
 ```
 
 ## Deployment Timeline
@@ -126,7 +138,7 @@ View outputs:
 ```bash
 aws cloudformation describe-stacks \
   --stack-name near-localnet-sync \
-  --profile shai-sandbox-profile \
+  --profile ${AWS_PROFILE} \
   --query "Stacks[0].Outputs"
 ```
 
@@ -170,10 +182,10 @@ Connect to the instance for debugging:
 aws ssm start-session \
   --target $(aws cloudformation describe-stacks \
     --stack-name near-localnet-infrastructure \
-    --profile shai-sandbox-profile \
+    --profile ${AWS_PROFILE} \
     --query "Stacks[0].Outputs[?OutputKey=='near-instance-id'].OutputValue" \
     --output text) \
-  --profile shai-sandbox-profile
+  --profile ${AWS_PROFILE}
 ```
 
 ### Logs
@@ -199,7 +211,7 @@ npm run destroy
 Or manually:
 
 ```bash
-cdk destroy --all --profile shai-sandbox-profile
+cdk destroy --all
 ```
 
 **Note**: Destroy stacks in reverse order (sync → install → infrastructure → common)

@@ -171,7 +171,13 @@ async function triggerViaSSM(
 
 async function main() {
     const args = process.argv.slice(2);
-    const profile = process.env.AWS_PROFILE || "shai-sandbox-profile";
+    const profile = process.env.AWS_PROFILE;
+    if (!profile) {
+        console.error("❌ Error: AWS_PROFILE environment variable is required");
+        console.error("   Set it with: export AWS_PROFILE=your-profile-name");
+        console.error("   Or add it to .env file (not tracked in git)");
+        process.exit(1);
+    }
     
     // Parse arguments
     const options: TestOptions = {

@@ -28,8 +28,14 @@ The NEAR localnet node runner deploys a fully functional NEAR blockchain node on
 
 ## Prerequisites
 
-1. Deploy NEAR localnet node runner (see main README.md)
-2. Install `@near-sandbox/cross-chain-simulator`:
+1. **AWS Profile**: Set your AWS profile before running any commands:
+   ```bash
+   export AWS_PROFILE=shai-sandbox-profile
+   # Or your specific profile name
+   ```
+
+2. Deploy NEAR localnet node runner (see main README.md)
+3. Install `@near-sandbox/cross-chain-simulator`:
 
 ```bash
 npm install @near-sandbox/cross-chain-simulator
@@ -52,13 +58,16 @@ Wait for all stacks to complete (~22 minutes).
 After deployment, export the configuration:
 
 ```bash
+export AWS_PROFILE=shai-sandbox-profile
 npm run build
 node dist/scripts/export-config.js
 ```
 
+**Note**: The `export-config.js` script requires `AWS_PROFILE` to be set to query CloudFormation stacks.
+
 This generates:
-- `localnet-config.json`: Complete configuration object
-- `.env.localnet`: Environment variables
+- `localnet-config.json`: Complete configuration object (in root of `lib/near/`)
+- `.env.localnet`: Environment variables (in root of `lib/near/`)
 
 ## Step 3: Configure cross-chain-simulator
 
@@ -90,12 +99,15 @@ const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 Get RPC URL from CloudFormation outputs:
 
 ```bash
+export AWS_PROFILE=shai-sandbox-profile
 aws cloudformation describe-stacks \
   --stack-name near-localnet-sync \
-  --profile shai-sandbox-profile \
-  --query "Stacks[0].Outputs[?OutputKey=='near-rpc-url'].OutputValue" \
+  --profile ${AWS_PROFILE} \
+  --query "Stacks[0].Outputs[?OutputKey=='nearrpcurl'].OutputValue" \
   --output text
 ```
+
+**Note**: CloudFormation output keys use lowercase without hyphens (e.g., `nearrpcurl` not `near-rpc-url`).
 
 ## Step 4: Use in cross-chain-simulator
 
@@ -205,18 +217,19 @@ For external access (outside VPC), consider:
 Example SSM port forwarding:
 
 ```bash
+export AWS_PROFILE=shai-sandbox-profile
 aws ssm start-session \
   --target $(aws cloudformation describe-stacks \
     --stack-name near-localnet-infrastructure \
-    --profile shai-sandbox-profile \
-    --query "Stacks[0].Outputs[?OutputKey=='near-instance-id'].OutputValue" \
+    --profile ${AWS_PROFILE} \
+    --query "Stacks[0].Outputs[?OutputKey=='nearinstanceid'].OutputValue" \
     --output text) \
   --document-name AWS-StartPortForwardingSession \
   --parameters '{"portNumber":["3030"],"localPortNumber":["3030"]}' \
-  --profile shai-sandbox-profile
+  --profile ${AWS_PROFILE}
 ```
 
-Then access via `http://localhost:3030`
+Then access via `http://localhost:3030` and set `NEAR_RPC_URL=http://localhost:3030` for cross-chain-simulator.
 
 ## Validation
 
@@ -268,9 +281,25 @@ console.log('NEAR node status:', status);
 
 If `export-config.js` fails:
 
-1. **Verify stacks deployed**: All 4 stacks must be deployed
-2. **Check AWS credentials**: Ensure `shai-sandbox-profile` is configured
-3. **Verify stack names**: Check stack names match expected values
+1. **Verify stacks deployed**: All 4 stacks must be deployed and in `CREATE_COMPLETE` or `UPDATE_COMPLETE` state
+2. **Check AWS profile**: Ensure `AWS_PROFILE` environment variable is set:
+   ```bash
+   export AWS_PROFILE=shai-sandbox-profile
+   aws sts get-caller-identity --profile ${AWS_PROFILE}
+   ```
+3. **Verify stack names**: Check stack names match expected values:
+   - `near-localnet-common`
+   - `near-localnet-infrastructure`
+   - `near-localnet-install`
+   - `near-localnet-sync`
+4. **Check CloudFormation outputs**: Verify outputs exist:
+   ```bash
+   aws cloudformation describe-stacks \
+     --stack-name near-localnet-sync \
+     --profile ${AWS_PROFILE} \
+     --query "Stacks[0].Outputs"
+   ```
+5. **Output key format**: CloudFormation output keys use lowercase without hyphens (e.g., `nearrpcurl`, `nearinstanceid`)
 
 ### cross-chain-simulator Connection Issues
 

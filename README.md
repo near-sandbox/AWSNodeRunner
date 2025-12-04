@@ -16,7 +16,7 @@ This directory tracks the development of NEAR blockchain node deployment via AWS
 - **Repository**: [aws-blockchain-node-runners](https://github.com/shaiss/aws-blockchain-node-runners)
 - **Branch**: `near` 
 - **Location**: `lib/near/`
-- **Status**: 🚧 Work in progress (doesn't work 100% of the time)
+- **Status**: ✅ Complete - Multi-stack CDK implementation ready for use
 
 ## Integration Architecture
 

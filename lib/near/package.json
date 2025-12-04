@@ -8,11 +8,11 @@
     "test": "npx jest --detectOpenHandles",
     "cdk": "npx cdk",
     "synth": "npx cdk synth",
-    "deploy": "npx cdk deploy --all --profile shai-sandbox-profile",
-    "destroy": "npx cdk destroy --all --profile shai-sandbox-profile",
+    "deploy": "npx cdk deploy --all",
+    "destroy": "npx cdk destroy --all",
     "export-config": "npm run build && node dist/scripts/export-config.js",
     "trigger-tests": "node -r ts-node/register scripts/trigger-tests.ts",
-    "deploy-test-only": "npm run build && npx cdk deploy near-test --profile shai-sandbox-profile",
+    "deploy-test-only": "npm run build && npx cdk deploy near-test",
     "fetch-validator-keys": "node -r ts-node/register scripts/fetch-validator-keys.ts"
   },
   "dependencies": {

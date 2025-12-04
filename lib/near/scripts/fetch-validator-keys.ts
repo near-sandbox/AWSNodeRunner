@@ -7,7 +7,13 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 
-const PROFILE = process.env.AWS_PROFILE || 'shai-sandbox-profile';
+const PROFILE = process.env.AWS_PROFILE;
+if (!PROFILE) {
+    console.error("❌ Error: AWS_PROFILE environment variable is required");
+    console.error("   Set it with: export AWS_PROFILE=your-profile-name");
+    console.error("   Or add it to .env file (not tracked in git)");
+    process.exit(1);
+}
 
 // Get instance ID from stack output
 function getInstanceId(): string {

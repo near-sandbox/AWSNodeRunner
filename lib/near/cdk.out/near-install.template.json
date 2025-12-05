@@ -11,7 +11,7 @@
       "nearVersion": {
        "type": "String",
        "description": "NEAR Protocol version to validate",
-       "default": "2.2.0"
+       "default": "2.10.1"
       },
       "nearNetwork": {
        "type": "String",
@@ -101,7 +101,7 @@
     },
     "Parameters": {
      "nearVersion": [
-      "2.2.0"
+      "2.10.1"
      ],
      "nearNetwork": [
       "localnet"

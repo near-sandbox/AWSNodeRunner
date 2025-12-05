@@ -1,7 +1,7 @@
 {
  "Description": "NEAR Localnet Infrastructure Stack - EC2 instance with cfn-signal",
  "Resources": {
-  "NearLocalnetNodeInstanceProfile6A762CC5": {
+  "NearLocalnetNodeV2101InstanceProfile1AF7AF63": {
    "Type": "AWS::IAM::InstanceProfile",
    "Properties": {
     "Roles": [
@@ -11,7 +11,7 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "near-infrastructure/NearLocalnetNode/InstanceProfile",
+    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101/InstanceProfile",
     "cdk_nag": {
      "rules_to_suppress": [
       {
@@ -34,7 +34,7 @@
     }
    }
   },
-  "NearLocalnetNode7187E002": {
+  "NearLocalnetNodeV2101318CF442": {
    "Type": "AWS::EC2::Instance",
    "Properties": {
     "AvailabilityZone": "us-east-1a",
@@ -49,7 +49,7 @@
      }
     ],
     "IamInstanceProfile": {
-     "Ref": "NearLocalnetNodeInstanceProfile6A762CC5"
+     "Ref": "NearLocalnetNodeV2101InstanceProfile1AF7AF63"
     },
     "ImageId": {
      "Ref": "SsmParameterValueawsservicecanonicalubuntuserver2404stablecurrentamd64hvmebsgp3amiidC96584B6F00A464EAD1953AFF4B05118Parameter"
@@ -70,7 +70,11 @@
      },
      {
       "Key": "Name",
-      "Value": "near-infrastructure/NearLocalnetNode"
+      "Value": "near-infrastructure/NearLocalnetNodeV2101"
+     },
+     {
+      "Key": "NearVersion",
+      "Value": "2.10.1"
      },
      {
       "Key": "Project",
@@ -78,11 +82,11 @@
      }
     ],
     "UserData": {
-     "Fn::Base64": "#!/bin/bash\n#!/bin/bash\nset -e\nexec > >(tee /var/log/near-setup.log) 2>&1\n\n# Update system\napt update\n\n# Install dependencies for NEAR compilation (Ubuntu packages)\napt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm\n\n# Install Rust as ubuntu user\nsu - ubuntu -c \"curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y\"\nsu - ubuntu -c \"source ~/.cargo/env && rustc --version\"\n\n# Clone nearcore\nsu - ubuntu -c \"cd ~ && git clone https://github.com/near/nearcore.git\"\nsu - ubuntu -c \"cd ~/nearcore && git checkout 2.2.0\"\n\n# Compile neard (takes ~10-15 minutes)\nsu - ubuntu -c \"cd ~/nearcore && source ~/.cargo/env && make neard\"\n\n# Install nearup (Ubuntu 24.04 requires --break-system-packages)\nsu - ubuntu -c \"pip3 install --user --break-system-packages nearup\"\n\n# Run nearup localnet with compiled binary\nsu - ubuntu -c \"export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release\" > /var/log/nearup.log 2>&1 &\n\n# Wait for NEAR to initialize\nsleep 60\n\necho \"NEAR localnet initialization complete\" > /var/log/near-init-complete.log"
+     "Fn::Base64": "#!/bin/bash\n#!/bin/bash\nset -e\nexec > >(tee /var/log/near-setup.log) 2>&1\n\n# Update system\napt update\n\n# Install dependencies for NEAR compilation (Ubuntu packages)\napt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm\n\n# Install Rust as ubuntu user\nsu - ubuntu -c \"curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y\"\nsu - ubuntu -c \"source ~/.cargo/env && rustc --version\"\n\n# Clone nearcore\nsu - ubuntu -c \"cd ~ && git clone https://github.com/near/nearcore.git\"\nsu - ubuntu -c \"cd ~/nearcore && git checkout 2.10.1\"\n\n# Compile neard (takes ~10-15 minutes)\nsu - ubuntu -c \"cd ~/nearcore && source ~/.cargo/env && make neard\"\n\n# Install nearup (Ubuntu 24.04 requires --break-system-packages)\nsu - ubuntu -c \"pip3 install --user --break-system-packages nearup\"\n\n# Run nearup localnet with compiled binary\nsu - ubuntu -c \"export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release\" > /var/log/nearup.log 2>&1 &\n\n# Wait for NEAR to initialize\nsleep 60\n\necho \"NEAR localnet initialization complete\" > /var/log/near-init-complete.log"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "near-infrastructure/NearLocalnetNode/Resource",
+    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101/Resource",
     "cdk_nag": {
      "rules_to_suppress": [
       {
@@ -129,7 +133,7 @@
  "Outputs": {
   "nearinstanceid": {
    "Value": {
-    "Ref": "NearLocalnetNode7187E002"
+    "Ref": "NearLocalnetNodeV2101318CF442"
    },
    "Export": {
     "Name": "NearLocalnetInstanceId"
@@ -138,7 +142,7 @@
   "nearinstanceprivateip": {
    "Value": {
     "Fn::GetAtt": [
-     "NearLocalnetNode7187E002",
+     "NearLocalnetNodeV2101318CF442",
      "PrivateIp"
     ]
    },
@@ -149,7 +153,7 @@
   "nearinstancepublicip": {
    "Value": {
     "Fn::GetAtt": [
-     "NearLocalnetNode7187E002",
+     "NearLocalnetNodeV2101318CF442",
      "PublicIp"
     ]
    },

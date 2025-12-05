@@ -233,7 +233,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-311843862895-us-east-1",
-     "S3Key": "cd25904e2a9167f75ffb2aa789bdf458eb9870cb80300e1ade948cbdb5167fd0.zip"
+     "S3Key": "0e8836d427fb79645b35228f7fd417c73c8f91f680ce623dc22caa4b2c8e2eba.zip"
     },
     "Environment": {
      "Variables": {
@@ -255,7 +255,7 @@
       "INSTANCE_ID": {
        "Fn::ImportValue": "NearLocalnetInstanceId"
       },
-      "VALIDATOR_KEY_JSON": "{\n  \"account_id\": \"node0\",\n  \"public_key\": \"ed25519:7PGseFbWxvYVgZ89K1uTJKYoKetWs7BJtbyXDzfbAcqX\",\n  \"secret_key\": \"ed25519:3D4YudUQRE39Lc4JHghuB5WM8kbgDDa34mnrEP5DdTApVH81af7e2dWgNPEaiQfdJnZq1CNPp5im4Rg5b733oiMP\"\n}"
+      "VALIDATOR_KEY_JSON": ""
      }
     },
     "FunctionName": "near-localnet-test",
@@ -309,7 +309,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "near-test/TestFunction/Resource",
-    "aws:asset:path": "asset.cd25904e2a9167f75ffb2aa789bdf458eb9870cb80300e1ade948cbdb5167fd0",
+    "aws:asset:path": "asset.0e8836d427fb79645b35228f7fd417c73c8f91f680ce623dc22caa4b2c8e2eba",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code",
     "cdk_nag": {
@@ -469,7 +469,7 @@
        {
         "Ref": "TestFunction22AD90FC"
        },
-       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1762399419277\"}}"
+       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1764973734317\"}}"
       ]
      ]
     },
@@ -481,7 +481,7 @@
        {
         "Ref": "TestFunction22AD90FC"
        },
-       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1762399419277\"}}"
+       "\",\"InvocationType\":\"RequestResponse\",\"Payload\":\"{\\\"includeWriteTests\\\":false,\\\"testDepth\\\":\\\"basic\\\"}\"},\"physicalResourceId\":{\"id\":\"test-1764973734317\"}}"
       ]
      ]
     },

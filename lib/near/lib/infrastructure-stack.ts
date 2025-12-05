@@ -111,7 +111,8 @@ export class NearInfrastructureStack extends cdk.Stack {
         );
 
         // Create EC2 instance (following working chain-mobil implementation)
-        this.instance = new ec2.Instance(this, "NearLocalnetNode", {
+        // Changed ID to force replacement when version updates
+        this.instance = new ec2.Instance(this, `NearLocalnetNodeV${nearVersion.replace(/\./g, "")}`, {
             vpc: this.vpc,
             instanceType: ec2InstanceType,
             machineImage,
@@ -132,6 +133,9 @@ export class NearInfrastructureStack extends cdk.Stack {
 
         // Store the logical ID for cfn-signal
         const nodeCFLogicalId = this.instance.node.defaultChild?.node.id || "NearLocalnetNode";
+
+        // Add version tag to force replacement when version changes
+        cdk.Tags.of(this.instance).add("NearVersion", nearVersion);
 
         this.instanceId = this.instance.instanceId;
 

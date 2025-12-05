@@ -1587,41 +1587,6 @@
    "Export": {
     "Name": "near-localnet-common:ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF"
    }
-  },
-  "ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339": {
-   "Value": {
-    "Fn::GetAtt": [
-     "NearVpc17ED9B68",
-     "CidrBlock"
-    ]
-   },
-   "Export": {
-    "Name": "near-localnet-common:ExportsOutputFnGetAttNearVpc17ED9B68CidrBlock50BFD339"
-   }
-  },
-  "ExportsOutputRefNearVpc17ED9B68D255C35F": {
-   "Value": {
-    "Ref": "NearVpc17ED9B68"
-   },
-   "Export": {
-    "Name": "near-localnet-common:ExportsOutputRefNearVpc17ED9B68D255C35F"
-   }
-  },
-  "ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E": {
-   "Value": {
-    "Ref": "NearVpcPrivateSubnet1SubnetE647D3D1"
-   },
-   "Export": {
-    "Name": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet1SubnetE647D3D15F5DCF9E"
-   }
-  },
-  "ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24": {
-   "Value": {
-    "Ref": "NearVpcPrivateSubnet2SubnetDDB4FE3B"
-   },
-   "Export": {
-    "Name": "near-localnet-common:ExportsOutputRefNearVpcPrivateSubnet2SubnetDDB4FE3B206BEA24"
-   }
   }
  },
  "Parameters": {

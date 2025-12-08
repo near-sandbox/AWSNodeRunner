@@ -9,6 +9,7 @@
     "cdk": "npx cdk",
     "synth": "npx cdk synth",
     "deploy": "npx cdk deploy --all",
+    "deploy:core": "npx cdk deploy near-common near-infrastructure near-install near-sync",
     "destroy": "npx cdk destroy --all",
     "export-config": "npm run build && node dist/scripts/export-config.js",
     "trigger-tests": "node -r ts-node/register scripts/trigger-tests.ts",

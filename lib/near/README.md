@@ -1,6 +1,22 @@
 # NEAR Localnet Node Runner
 
+> **Layer 1: NEAR Base** - Foundation of the NEAR Localnet Simulator Stack
+
 AWS CDK deployment for NEAR Protocol localnet nodes. This module provides a standalone, production-ready deployment of NEAR localnet nodes on AWS infrastructure.
+
+## Layer Architecture
+
+This is **Layer 1** of the 5-layer NEAR Localnet Simulator Stack:
+
+```
+Layer 1: NEAR Base (this repo)      ← You are here
+Layer 2: NEAR Services              → near-localnet-services
+Layer 3: Chain Signatures           → cross-chain-simulator
+Layer 4: Intents Protocol           → near-intents-simulator
+Layer 5: User Applications          → Your dApp
+```
+
+**Provides to higher layers**: NEAR RPC endpoint for transactions and queries.
 
 ## Overview
 
@@ -77,7 +93,7 @@ Configuration is managed in `lib/config/localnet-config.ts`. Default values:
 - **Instance Type**: `t3.large` (2 vCPU, 8GB RAM)
 - **Architecture**: `x86_64` (required for NEAR)
 - **Network**: `localnet`
-- **NEAR Version**: `2.2.0`
+- **NEAR Version**: `2.10.1`
 - **Volume Size**: 30GB GP3
 - **RPC Port**: 3030
 
@@ -88,7 +104,7 @@ export AWS_PROFILE=your-profile-name  # Required: AWS CLI profile
 export AWS_ACCOUNT_ID=123456789012
 export AWS_REGION=us-east-1
 export NEAR_NETWORK=localnet
-export NEAR_VERSION=2.2.0
+export NEAR_VERSION=2.10.1
 ```
 
 **Note**: The `AWS_PROFILE` environment variable is required for all CDK commands and scripts. Add it to `.env` (not tracked in git) for convenience.
@@ -269,7 +285,7 @@ If sync stack reports RPC unavailable:
 
 ### NEAR Configuration
 
-- **Version**: 2.2.0 (from nearcore git tag)
+- **Version**: 2.10.1 (from nearcore git tag)
 - **Network**: localnet (via nearup)
 - **RPC Port**: 3030
 - **Binary Path**: `~/nearcore/target/release`

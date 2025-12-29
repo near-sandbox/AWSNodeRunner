@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
+import { NearCommonStack } from "../lib/common-stack";
 import { NearInfrastructureStack } from "../lib/infrastructure-stack";
 import * as configTypes from "../lib/config/node-config.interface";
 
@@ -10,32 +11,15 @@ describe("NearInfrastructureStack", () => {
     beforeEach(() => {
         app = new cdk.App();
         
-        // First create a common stack to export values
-        const commonStack = new cdk.Stack(app, "CommonStack", {
+        const commonStack = new NearCommonStack(app, "TestCommonStack", {
             env: { account: "123456789012", region: "us-east-1" },
-        });
-        
-        // Create mock exports
-        new cdk.CfnOutput(commonStack, "NearVpcId", {
-            value: "vpc-12345",
-            exportName: "NearVpcId",
-        });
-        
-        new cdk.CfnOutput(commonStack, "NearSecurityGroupId", {
-            value: "sg-12345",
-            exportName: "NearSecurityGroupId",
-        });
-        
-        new cdk.CfnOutput(commonStack, "NearNodeInstanceRoleArn", {
-            value: "arn:aws:iam::123456789012:role/test-role",
-            exportName: "NearNodeInstanceRoleArn",
         });
 
         const props: configTypes.NearBaseNodeConfig = {
             instanceType: "t3.large",
             instanceCpuType: "x86_64",
             nearNetwork: "localnet",
-            nearVersion: "2.2.0",
+            nearVersion: "2.10.1",
             dataVolume: {
                 sizeGiB: 30,
                 type: "gp3",
@@ -45,6 +29,9 @@ describe("NearInfrastructureStack", () => {
 
         stack = new NearInfrastructureStack(app, "TestStack", {
             ...props,
+            vpc: commonStack.vpc,
+            securityGroup: commonStack.securityGroup,
+            instanceRole: commonStack.instanceRole,
             env: { account: "123456789012", region: "us-east-1" },
         });
     });
@@ -60,7 +47,7 @@ describe("NearInfrastructureStack", () => {
         const template = Template.fromStack(stack);
         template.hasOutput("near-instance-id", {
             Export: {
-                Name: "NearInstanceId",
+                Name: "NearLocalnetInstanceId",
             },
         });
     });
@@ -69,7 +56,7 @@ describe("NearInfrastructureStack", () => {
         const template = Template.fromStack(stack);
         template.hasOutput("near-instance-private-ip", {
             Export: {
-                Name: "NearInstancePrivateIp",
+                Name: "NearLocalnetInstancePrivateIp",
             },
         });
     });

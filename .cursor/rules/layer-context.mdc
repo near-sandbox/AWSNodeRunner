@@ -1,0 +1,114 @@
+---
+alwaysApply: true
+description: Layer 1 context - NEAR Base foundation for the 5-layer simulator stack
+---
+
+# Layer 1: NEAR Base - Layer Context
+
+**This is Layer 1 (foundation) of the 5-layer NEAR Localnet Simulator Stack**
+
+## Layer Architecture Position
+
+```
+Layer 1: NEAR Base          → This repository ← YOU ARE HERE
+Layer 2: NEAR Services      → near-localnet-services
+Layer 3: Chain Signatures   → cross-chain-simulator (includes MPC)
+Layer 4: Intents Protocol   → near-intents-simulator
+Layer 5: User Applications  → Your dApp
+```
+
+**Depends on**: Nothing (foundation layer)
+**Provides to**: All higher layers - NEAR RPC endpoint for blockchain operations
+
+**Architecture Reference**: See `/CORRECTED_ARCHITECTURE.md` for complete stack details.
+
+## What This Layer Provides
+
+### NEAR RPC Node
+- NEAR Protocol blockchain node (v2.10.1)
+- RPC endpoint: `http://{private-ip}:3030`
+- Block production and consensus
+- Transaction execution and queries
+
+### AWS Infrastructure
+- VPC with 2 AZs
+- Security groups
+- IAM roles
+- EC2 instance (m7a.2xlarge or t3.large)
+- SSM Session Manager access
+
+### Outputs for Higher Layers
+```typescript
+{
+  rpc_url: "http://10.0.55.70:3030",
+  network_id: "localnet",
+  vpc_id: "vpc-xxx",
+  instance_id: "i-xxx",
+  private_ip: "10.0.55.70"
+}
+```
+
+## Deployment
+
+### Standalone
+```bash
+cd lib/near
+npm run deploy  # Uses --profile shai-sandbox-profile
+```
+
+### Via Orchestrator
+```bash
+cd /near-localnet-orchestrator
+npx near-orchestrator deploy near_base
+```
+
+## Integration with Higher Layers
+
+### Layer 2 (NEAR Services) Needs:
+- `rpc_url` - For faucet Lambda to connect
+- `vpc_id` - For Lambda VPC configuration
+- `network_id` - For NEAR API configuration
+
+### Layer 3 (Chain Signatures) Needs:
+- `rpc_url` - For v1.signer contract deployment
+- `vpc_id` - For MPC node networking
+- `network_id` - For NEAR integration
+
+### Layer 4 (Intents Protocol) Needs:
+- `rpc_url` - For NEAR transaction execution
+- `network_id` - For client configuration
+
+## Multi-Stack Architecture
+
+This layer uses AWS CDK multi-stack pattern:
+1. **Common Stack**: VPC, IAM, security groups (~2 min)
+2. **Infrastructure Stack**: EC2 instance (~5 min)
+3. **Install Stack**: Validates NEAR installation (~15 min)
+4. **Sync Stack**: Validates service and exposes RPC (~immediate)
+
+**Total**: ~22 minutes
+
+## AWS Profile
+
+All commands use: `--profile shai-sandbox-profile`
+
+## Configuration Export
+
+After deployment, export config for higher layers:
+
+```bash
+npm run build
+node dist/scripts/export-config.js
+```
+
+Generates:
+- `localnet-config.json` - JSON configuration
+- `.env.localnet` - Environment variables
+
+## Important Notes
+
+1. **This is the foundation**: All other layers depend on this
+2. **x86_64 required**: NEAR doesn't support ARM64
+3. **Private IP**: RPC uses private IP, requires VPC access or SSM port forwarding
+4. **Network isolation**: Security group restricts RPC to VPC CIDR
+5. **Standalone deployable**: Can be used without orchestrator

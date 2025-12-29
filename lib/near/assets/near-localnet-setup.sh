@@ -14,13 +14,13 @@ su - ubuntu -c "source ~/.cargo/env && rustc --version"
 
 # Clone nearcore
 su - ubuntu -c "cd ~ && git clone https://github.com/near/nearcore.git"
-su - ubuntu -c "cd ~/nearcore && git checkout 2.2.0"
+su - ubuntu -c "cd ~/nearcore && git checkout 2.10.1"
 
 # Compile neard (takes ~10-15 minutes)
 su - ubuntu -c "cd ~/nearcore && source ~/.cargo/env && make neard"
 
-# Install nearup
-su - ubuntu -c "pip3 install --user nearup"
+# Install nearup (Ubuntu 24.04 requires --break-system-packages)
+su - ubuntu -c "pip3 install --user --break-system-packages nearup"
 
 # Run nearup localnet with compiled binary
 su - ubuntu -c "export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release" > /var/log/nearup.log 2>&1 &

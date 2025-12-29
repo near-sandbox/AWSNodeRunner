@@ -50,6 +50,14 @@ export class NearCommonStack extends cdk.Stack {
             "Allow NEAR RPC from within VPC"
         );
 
+        // Allow VPC access to NEAR P2P ports (needed for MPC node indexers to peer).
+        // NOTE: nearup localnet uses a port per node: 24567, 24568, 24569, 24570 (for 4 nodes).
+        this.securityGroup.addIngressRule(
+            ec2.Peer.ipv4(this.vpc.vpcCidrBlock),
+            ec2.Port.tcpRange(24567, 24570),
+            "Allow NEAR P2P from within VPC"
+        );
+
         // Allow SSH for debugging
         this.securityGroup.addIngressRule(
             ec2.Peer.anyIpv4(),

@@ -1,0 +1,24 @@
+{
+  "near-localnet-common": {
+    "InstanceRoleArn": "arn:aws:iam::311843862895:role/near-localnet-common-NearNodeRole5BF1752D-Jx0KhC20SKhs",
+    "VpcId": "vpc-0655b93d83acfeda0",
+    "ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF": "subnet-0f15df0e53c5ab4b7",
+    "SecurityGroupId": "sg-0ebe68c6934643700",
+    "ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018": "sg-0ebe68c6934643700",
+    "ExportsOutputRefNearNodeRole5BF1752D644CF4FE": "near-localnet-common-NearNodeRole5BF1752D-Jx0KhC20SKhs"
+  },
+  "near-localnet-infrastructure": {
+    "nearinstanceid": "i-04e50891ed0111b73",
+    "nearinstanceprivateip": "10.0.13.20",
+    "nearinstancepublicip": "3.85.75.71"
+  },
+  "near-localnet-install": {
+    "installdocumentname": "near-validate-install-near-localnet-install",
+    "installstatus": "Installation validation initiated - monitor via SSM"
+  },
+  "near-localnet-sync": {
+    "syncstatus": "9aa19ead-cfc8-4927-b5ac-a0b8cc0fdc6b",
+    "nearnetworkid": "localnet",
+    "nearrpcurl": "http://10.0.13.20:3030"
+  }
+}

@@ -1367,6 +1367,18 @@
       "ToPort": 3030
      },
      {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "NearVpc17ED9B68",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Allow NEAR P2P from within VPC",
+      "FromPort": 24567,
+      "IpProtocol": "tcp",
+      "ToPort": 24570
+     },
+     {
       "CidrIp": "0.0.0.0/0",
       "Description": "SSH access for debugging",
       "FromPort": 22,

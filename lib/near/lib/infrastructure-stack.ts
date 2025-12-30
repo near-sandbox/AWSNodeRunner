@@ -126,8 +126,10 @@ export class NearInfrastructureStack extends cdk.Stack {
             '',
             '# Stop nearup and all neard processes before patching genesis',
             'echo "Stopping nearup and neard processes..."',
-            'su - ubuntu -c "pkill -f nearup || true"',
-            'su - ubuntu -c "pkill -f neard || true"',
+            // Stop any running nearup/neard processes before patching genesis.
+            // Run as root to avoid permission issues (nearup is started via a root-owned su wrapper).
+            'pkill -f nearup || true',
+            'pkill -f neard || true',
             'sleep 5',
             '',
             '# Generate localnet keypair using neard init (works in neard 2.10.1)',

@@ -24,8 +24,8 @@ export class NearSyncStack extends cdk.Stack {
         const instancePrivateIp = cdk.Fn.importValue("NearLocalnetInstancePrivateIp");
         const installStatus = cdk.Fn.importValue("NearLocalnetInstallStatus");
 
-        // For localnet, nearup is already running from UserData script
-        // This stack validates the service is running and exposes RPC endpoint
+        // For localnet, the node processes are started by UserData (nearup or direct neard).
+        // This stack validates the service is running and exposes RPC endpoint.
         const validateServiceDoc = new ssm.CfnDocument(this, "near-validate-service", {
             documentType: "Command",
             documentFormat: "YAML",
@@ -51,9 +51,13 @@ export class NearSyncStack extends cdk.Stack {
                                 "set -euo pipefail",
                                 "echo '[SYNC-STACK] Validating NEAR localnet service...'",
                                 "",
-                                "# Check if nearup process is running",
-                                "if ! pgrep -f 'nearup' > /dev/null; then",
-                                "  echo '[SYNC-STACK] ERROR: nearup process not found'",
+                                "# Check if the node process is running (nearup or neard)",
+                                "if pgrep -f 'nearup' > /dev/null; then",
+                                "  echo '[SYNC-STACK] nearup process found'",
+                                "elif pgrep -f 'neard' > /dev/null; then",
+                                "  echo '[SYNC-STACK] neard process found'",
+                                "else",
+                                "  echo '[SYNC-STACK] ERROR: neither nearup nor neard process found'",
                                 "  exit 1",
                                 "fi",
                                 "",

@@ -1,7 +1,8 @@
 import * as configTypes from "./node-config.interface";
 
 export const localnetConfig: configTypes.NearBaseNodeConfig = {
-    instanceType: "t3.large",
+    // Use a larger non-burstable instance to reduce nearcore cold-compile time.
+    instanceType: "m7a.2xlarge",
     instanceCpuType: "x86_64",
     nearNetwork: "localnet",
     nearVersion: "2.10.1",

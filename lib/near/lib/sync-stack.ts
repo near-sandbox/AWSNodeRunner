@@ -29,7 +29,6 @@ export class NearSyncStack extends cdk.Stack {
         const validateServiceDoc = new ssm.CfnDocument(this, "near-validate-service", {
             documentType: "Command",
             documentFormat: "YAML",
-            name: `near-validate-service-${this.stackName}`,
             content: {
                 schemaVersion: "2.2",
                 description: "Validate NEAR localnet service is running",

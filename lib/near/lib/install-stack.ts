@@ -25,7 +25,6 @@ export class NearInstallStack extends cdk.Stack {
         const validateInstallDoc = new ssm.CfnDocument(this, "near-validate-install", {
             documentType: "Command",
             documentFormat: "YAML",
-            name: `near-validate-install-${this.stackName}`,
             content: {
                 schemaVersion: "2.2",
                 description: "Validate NEAR localnet installation is complete",

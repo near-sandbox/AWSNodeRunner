@@ -81,6 +81,20 @@ export class NearCommonStack extends cdk.Stack {
             })
         );
 
+        // Allow SSM parameter write for storing localnet keypair
+        this.instanceRole.addToPolicy(
+            new iam.PolicyStatement({
+                resources: [
+                    `arn:aws:ssm:${this.region}:${this.account}:parameter/near-localnet/localnet-account-key`,
+                    `arn:aws:ssm:${this.region}:${this.account}:parameter/near-localnet/localnet-account-id`,
+                ],
+                actions: [
+                    "ssm:PutParameter",
+                    "ssm:GetParameter",
+                ],
+            })
+        );
+
         // Export instance role ARN for use in other stacks
         new cdk.CfnOutput(this, "InstanceRoleArn", {
             value: this.instanceRole.roleArn,

@@ -76,6 +76,7 @@ export class NearInfrastructureStack extends cdk.Stack {
         // UserData script following the working implementation from chain-mobil/cdk
         // This compiles and runs neard on Ubuntu per NEAR's recommendations
         // Modified to add localnet root account to genesis for .localnet naming parity
+        // Force replacement: 2025-12-30T05:35:00Z
         const userData = ec2.UserData.forLinux();
         userData.addCommands(
             '#!/bin/bash',

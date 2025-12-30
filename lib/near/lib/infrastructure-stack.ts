@@ -83,11 +83,15 @@ export class NearInfrastructureStack extends cdk.Stack {
             'set -e',
             'exec > >(tee /var/log/near-setup.log) 2>&1',
             '',
+            '# Force replacement timestamp: 2025-12-30T05:35:00Z',
+            '',
             '# Update system',
             'apt update',
             '',
             '# Install dependencies for NEAR compilation (Ubuntu packages)',
-            'apt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm jq awscli',
+            // NOTE: Ubuntu 24.04 no longer provides an `awscli` apt candidate in some images/repos.
+            // Install AWS CLI via pip below.
+            'apt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm jq',
             '',
             '# Install Rust as ubuntu user',
             'su - ubuntu -c "curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"',
@@ -102,6 +106,10 @@ export class NearInfrastructureStack extends cdk.Stack {
             '',
             '# Install nearup (Ubuntu 24.04 requires --break-system-packages)',
             'su - ubuntu -c "pip3 install --user --break-system-packages nearup"',
+            '',
+            '# Install AWS CLI (required for writing SSM parameters during bootstrap)',
+            'pip3 install --break-system-packages awscli',
+            'aws --version || true',
             '',
             '# Run nearup localnet with compiled binary (creates genesis.json)',
             'su - ubuntu -c "export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release" > /var/log/nearup.log 2>&1 &',
@@ -186,7 +194,13 @@ export class NearInfrastructureStack extends cdk.Stack {
             '# Store localnet keypair in SSM Parameter Store',
             'echo "Storing localnet keypair in SSM..."',
             'if [ -n "$LOCALNET_SECRET_KEY" ] && [ "$LOCALNET_SECRET_KEY" != "null" ]; then',
-            '  AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)',
+            '  # IMDSv2-safe region discovery',
+            '  TOKEN=$(curl -sS -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" || true)',
+            '  if [ -n "$TOKEN" ]; then',
+            '    AWS_REGION=$(curl -sS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)',
+            '  else',
+            '    AWS_REGION=$(curl -sS http://169.254.169.254/latest/meta-data/placement/region)',
+            '  fi',
             '  aws ssm put-parameter --name "/near-localnet/localnet-account-key" --value "$LOCALNET_SECRET_KEY" --type "SecureString" --overwrite --region "$AWS_REGION" || true',
             '  aws ssm put-parameter --name "/near-localnet/localnet-account-id" --value "localnet" --type "String" --overwrite --region "$AWS_REGION" || true',
             '  echo "Localnet keypair stored in SSM"',
@@ -208,7 +222,8 @@ export class NearInfrastructureStack extends cdk.Stack {
 
         // Create EC2 instance (following working chain-mobil implementation)
         // Changed ID to force replacement when version updates
-        this.instance = new ec2.Instance(this, `NearLocalnetNodeV${nearVersion.replace(/\./g, "")}`, {
+        // Added timestamp suffix to force new instance creation for genesis modification
+        this.instance = new ec2.Instance(this, `NearLocalnetNodeV${nearVersion.replace(/\./g, "")}Localnet`, {
             vpc: this.vpc,
             instanceType: ec2InstanceType,
             machineImage,

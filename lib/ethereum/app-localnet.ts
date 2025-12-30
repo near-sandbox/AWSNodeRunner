@@ -7,10 +7,10 @@ const app = new cdk.App();
 
 // Configuration for localnet deployment
 const config = {
-  account: process.env.CDK_DEFAULT_ACCOUNT || "311843862895",
-  region: process.env.CDK_DEFAULT_REGION || "us-east-1",
-  vpcId: "vpc-0ad7ab6659e0293ae", // Existing NEAR VPC
-  instanceType: "t3.medium",
+  account: app.node.tryGetContext('accountId') || process.env.CDK_DEFAULT_ACCOUNT || "311843862895",
+  region: app.node.tryGetContext('region') || process.env.CDK_DEFAULT_REGION || "us-east-1",
+  vpcId: app.node.tryGetContext('vpcId') || "vpc-0ad7ab6659e0293ae", // Existing NEAR VPC
+  instanceType: app.node.tryGetContext('instanceType') || "t3.medium",
   devMode: true, // Enable Geth --dev mode
 };
 

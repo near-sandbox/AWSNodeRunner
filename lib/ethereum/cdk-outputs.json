@@ -1,0 +1,9 @@
+{
+  "ethereum-localnet": {
+    "GethInstanceId": "i-049e1304a13bd7a21",
+    "GethRpcUrl": "http://10.0.31.138:8545",
+    "GethWsUrl": "ws://10.0.31.138:8546",
+    "GethPrivateIp": "10.0.31.138",
+    "GethChainId": "1337"
+  }
+}

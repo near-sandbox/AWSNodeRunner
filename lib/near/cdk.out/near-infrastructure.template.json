@@ -1,7 +1,7 @@
 {
  "Description": "NEAR Localnet Infrastructure Stack - EC2 instance with cfn-signal",
  "Resources": {
-  "NearLocalnetNodeV2101InstanceProfile1AF7AF63": {
+  "NearLocalnetNodeV2101LocalnetInstanceProfileE4F6B173": {
    "Type": "AWS::IAM::InstanceProfile",
    "Properties": {
     "Roles": [
@@ -11,7 +11,7 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101/InstanceProfile",
+    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101Localnet/InstanceProfile",
     "cdk_nag": {
      "rules_to_suppress": [
       {
@@ -34,7 +34,7 @@
     }
    }
   },
-  "NearLocalnetNodeV2101318CF442": {
+  "NearLocalnetNodeV2101Localnet91986FCF": {
    "Type": "AWS::EC2::Instance",
    "Properties": {
     "AvailabilityZone": "us-east-1a",
@@ -49,12 +49,12 @@
      }
     ],
     "IamInstanceProfile": {
-     "Ref": "NearLocalnetNodeV2101InstanceProfile1AF7AF63"
+     "Ref": "NearLocalnetNodeV2101LocalnetInstanceProfileE4F6B173"
     },
     "ImageId": {
      "Ref": "SsmParameterValueawsservicecanonicalubuntuserver2404stablecurrentamd64hvmebsgp3amiidC96584B6F00A464EAD1953AFF4B05118Parameter"
     },
-    "InstanceType": "t3.large",
+    "InstanceType": "m7a.2xlarge",
     "SecurityGroupIds": [
      {
       "Fn::ImportValue": "near-localnet-common:ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018"
@@ -70,7 +70,7 @@
      },
      {
       "Key": "Name",
-      "Value": "near-infrastructure/NearLocalnetNodeV2101"
+      "Value": "near-infrastructure/NearLocalnetNodeV2101Localnet"
      },
      {
       "Key": "NearVersion",
@@ -82,11 +82,11 @@
      }
     ],
     "UserData": {
-     "Fn::Base64": "#!/bin/bash\n#!/bin/bash\nset -e\nexec > >(tee /var/log/near-setup.log) 2>&1\n\n# Update system\napt update\n\n# Install dependencies for NEAR compilation (Ubuntu packages)\napt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm\n\n# Install Rust as ubuntu user\nsu - ubuntu -c \"curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y\"\nsu - ubuntu -c \"source ~/.cargo/env && rustc --version\"\n\n# Clone nearcore\nsu - ubuntu -c \"cd ~ && git clone https://github.com/near/nearcore.git\"\nsu - ubuntu -c \"cd ~/nearcore && git checkout 2.10.1\"\n\n# Compile neard (takes ~10-15 minutes)\nsu - ubuntu -c \"cd ~/nearcore && source ~/.cargo/env && make neard\"\n\n# Install nearup (Ubuntu 24.04 requires --break-system-packages)\nsu - ubuntu -c \"pip3 install --user --break-system-packages nearup\"\n\n# Run nearup localnet with compiled binary\nsu - ubuntu -c \"export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release\" > /var/log/nearup.log 2>&1 &\n\n# Wait for NEAR to initialize\nsleep 60\n\necho \"NEAR localnet initialization complete\" > /var/log/near-init-complete.log"
+     "Fn::Base64": "#!/bin/bash\n#!/bin/bash\nset -e\nexec > >(tee /var/log/near-setup.log) 2>&1\n\n# Force replacement timestamp: 2025-12-30T05:35:00Z\n\n# Update system\napt update\n\n# Install dependencies for NEAR compilation (Ubuntu packages)\napt install -y git binutils-dev libcurl4-openssl-dev zlib1g-dev libdw-dev libiberty-dev cmake gcc g++ python3 python3-pip protobuf-compiler libssl-dev pkg-config clang llvm jq\n\n# Install Rust as ubuntu user\nsu - ubuntu -c \"curl --proto =https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y\"\nsu - ubuntu -c \"source ~/.cargo/env && rustc --version\"\n\n# Clone nearcore\nsu - ubuntu -c \"cd ~ && git clone https://github.com/near/nearcore.git\"\nsu - ubuntu -c \"cd ~/nearcore && git checkout 2.10.1\"\n\n# Compile neard (takes ~10-15 minutes)\nsu - ubuntu -c \"cd ~/nearcore && source ~/.cargo/env && make neard\"\n\n# Install nearup (Ubuntu 24.04 requires --break-system-packages)\nsu - ubuntu -c \"pip3 install --user --break-system-packages nearup\"\n\n# Install AWS CLI (required for writing SSM parameters during bootstrap)\npip3 install --break-system-packages awscli\naws --version || true\n\n# Run nearup localnet with compiled binary (creates genesis.json)\nsu - ubuntu -c \"export PATH=$PATH:~/.local/bin && nearup run localnet --binary-path ~/nearcore/target/release\" > /var/log/nearup.log 2>&1 &\n\n# Wait for genesis.json to be created by nearup\necho \"Waiting for genesis.json to be created...\"\nfor i in {1..60}; do\n  if [ -f /home/ubuntu/.near/localnet/node0/genesis.json ]; then\n    echo \"Genesis file found\"\n    break\n  fi\n  sleep 2\ndone\n\n# Stop nearup and all neard processes before patching genesis\necho \"Stopping nearup and neard processes...\"\npkill -f nearup || true\npkill -f neard || true\nsleep 5\n\n# Generate localnet keypair using neard init (works in neard 2.10.1)\necho \"Generating localnet keypair using neard init...\"\nsu - ubuntu -c \"rm -rf ~/.near/localnet-keygen && mkdir -p ~/.near/localnet-keygen\"\nsu - ubuntu -c \"~/nearcore/target/release/neard --home ~/.near/localnet-keygen init --account-id localnet --chain-id localnet --fast\"\n\n# Extract public and secret keys from validator_key.json\nLOCALNET_KEY_FILE=\"/home/ubuntu/.near/localnet-keygen/validator_key.json\"\nif [ ! -f \"$LOCALNET_KEY_FILE\" ]; then\n  echo \"ERROR: validator_key.json not found after neard init\"\n  exit 1\nfi\nLOCALNET_PUBLIC_KEY=$(su - ubuntu -c \"cat $LOCALNET_KEY_FILE | jq -r '.public_key'\" 2>/dev/null || echo \"\")\nLOCALNET_SECRET_KEY=$(su - ubuntu -c \"cat $LOCALNET_KEY_FILE | jq -r '.secret_key'\" 2>/dev/null || echo \"\")\n\nif [ -z \"$LOCALNET_PUBLIC_KEY\" ] || [ -z \"$LOCALNET_SECRET_KEY\" ] || [ \"$LOCALNET_PUBLIC_KEY\" = \"null\" ] || [ \"$LOCALNET_SECRET_KEY\" = \"null\" ]; then\n  echo \"ERROR: Could not extract localnet keys from validator_key.json\"\n  exit 1\nfi\n\n# Create Python script for genesis patching with reallocation\ncat > /tmp/patch-genesis-localnet.py << 'PYEOF'\n#!/usr/bin/env python3\nimport json\nimport sys\n\nif len(sys.argv) != 5:\n    print(\"Usage: patch-genesis-localnet.py <genesis.json> <public_key> <transfer_amount> <output.json>\")\n    sys.exit(1)\n\ngenesis_path = sys.argv[1]\npublic_key = sys.argv[2]\ntransfer_amount = sys.argv[3]\noutput_path = sys.argv[4]\n\nwith open(genesis_path, 'r') as f:\n    genesis = json.load(f)\n\n# Find node0 Account record and subtract transfer_amount\nnode0_found = False\nfor record in genesis.get('records', []):\n    if 'Account' in record:\n        account = record['Account']\n        if account.get('account_id') == 'node0':\n            node0_found = True\n            current_amount = int(account['account']['amount'])\n            new_amount = current_amount - int(transfer_amount)\n            if new_amount < 0:\n                print(f\"ERROR: node0 balance ({current_amount}) insufficient for transfer ({transfer_amount})\")\n                sys.exit(1)\n            account['account']['amount'] = str(new_amount)\n            print(f\"Reallocated {transfer_amount} yoctoNEAR from node0 (new balance: {new_amount})\")\n            break\n\nif not node0_found:\n    print(\"ERROR: node0 Account record not found in genesis\")\n    sys.exit(1)\n\n# Add localnet Account record\nlocalnet_account_record = {\n    \"Account\": {\n        \"account_id\": \"localnet\",\n        \"account\": {\n            \"amount\": transfer_amount,\n            \"locked\": \"0\",\n            \"code_hash\": \"11111111111111111111111111111111\",\n            \"storage_usage\": 182,\n            \"version\": \"V1\"\n        }\n    }\n}\ngenesis['records'].append(localnet_account_record)\n\n# Add localnet AccessKey record\nlocalnet_access_key_record = {\n    \"AccessKey\": {\n        \"account_id\": \"localnet\",\n        \"public_key\": public_key,\n        \"access_key\": {\n            \"nonce\": 0,\n            \"permission\": \"FullAccess\"\n        }\n    }\n}\ngenesis['records'].append(localnet_access_key_record)\n\nwith open(output_path, 'w') as f:\n    json.dump(genesis, f, indent=2)\n\nprint(f\"Genesis patched successfully: {output_path}\")\nPYEOF\nchmod +x /tmp/patch-genesis-localnet.py\n\n# Patch genesis.json with reallocation from node0\necho \"Patching genesis.json with localnet account (reallocating from node0)...\"\nGENESIS_PATH=\"/home/ubuntu/.near/localnet/node0/genesis.json\"\nAMOUNT=\"100000000000000000000000000000\"  # 100,000 NEAR\n\n# Backup genesis\nsu - ubuntu -c \"cp $GENESIS_PATH ${GENESIS_PATH}.backup.$(date +%s)\"\n\n# Run Python script to patch genesis\npython3 /tmp/patch-genesis-localnet.py \"$GENESIS_PATH\" \"$LOCALNET_PUBLIC_KEY\" \"$AMOUNT\" /tmp/genesis_patched.json\n\n# Replace genesis for all nodes\nfor node in node0 node1 node2 node3; do\n  if [ -d /home/ubuntu/.near/localnet/$node ]; then\n    su - ubuntu -c \"cp /tmp/genesis_patched.json /home/ubuntu/.near/localnet/$node/genesis.json\"\n    echo \"Updated genesis for $node\"\n  fi\ndone\n\n# Remove node data directories so nodes start cleanly with patched genesis\necho \"Removing node data directories for clean start...\"\nfor node in node0 node1 node2 node3; do\n  if [ -d /home/ubuntu/.near/localnet/$node/data ]; then\n    su - ubuntu -c \"rm -rf /home/ubuntu/.near/localnet/$node/data\"\n    echo \"Removed data directory for $node\"\n  fi\ndone\n\n# Store localnet keypair in SSM Parameter Store\necho \"Storing localnet keypair in SSM...\"\n# IMDSv2-safe region discovery\nTOKEN=$(curl -sS -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\" || true)\nif [ -n \"$TOKEN\" ]; then\n  AWS_REGION=$(curl -sS -H \"X-aws-ec2-metadata-token: $TOKEN\" http://169.254.169.254/latest/meta-data/placement/region)\nelse\n  AWS_REGION=$(curl -sS http://169.254.169.254/latest/meta-data/placement/region)\nfi\naws ssm put-parameter --name \"/near-localnet/localnet-account-key\" --value \"$LOCALNET_SECRET_KEY\" --type \"SecureString\" --overwrite --region \"$AWS_REGION\" || true\naws ssm put-parameter --name \"/near-localnet/localnet-account-id\" --value \"localnet\" --type \"String\" --overwrite --region \"$AWS_REGION\" || true\necho \"Localnet keypair stored in SSM\"\n\n# Start neard processes directly (not via nearup)\necho \"Starting neard processes with patched genesis...\"\n# Get node0 boot node public key\nBOOT_PUB=$(su - ubuntu -c \"cat ~/.near/localnet/node0/node_key.json | jq -r '.public_key'\")\nBOOT_NODE=\"${BOOT_PUB}@127.0.0.1:24567\"\n\n# Start node0\nsu - ubuntu -c \"nohup ~/nearcore/target/release/neard --home ~/.near/localnet/node0 run > ~/neard-node0.log 2>&1 &\"\nsleep 2\n\n# Start node1, node2, node3 with boot node\nfor i in 1 2 3; do\n  su - ubuntu -c \"nohup ~/nearcore/target/release/neard --home ~/.near/localnet/node$i run --boot-nodes $BOOT_NODE > ~/neard-node$i.log 2>&1 &\"\ndone\n\n# Wait for nodes to initialize\nsleep 10\n\n# Validation: Check RPC status\necho \"Validating NEAR node startup...\"\nfor i in {1..30}; do\n  if curl -sS http://127.0.0.1:3030/status > /dev/null 2>&1; then\n    echo \"RPC endpoint responding\"\n    break\n  fi\n  if [ $i -eq 30 ]; then\n    echo \"WARNING: RPC endpoint not responding after 30 attempts\"\n  fi\n  sleep 2\ndone\n\n# Validation: Verify localnet account exists in genesis\nif grep -q \"\\\"account_id\\\": \\\"localnet\\\"\" /home/ubuntu/.near/localnet/node0/genesis.json; then\n  echo \"✅ Genesis contains localnet account\"\nelse\n  echo \"❌ ERROR: Genesis does not contain localnet account\"\n  exit 1\nfi\n\necho \"NEAR localnet initialization complete with localnet root account\" > /var/log/near-init-complete.log"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101/Resource",
+    "aws:cdk:path": "near-infrastructure/NearLocalnetNodeV2101Localnet/Resource",
     "cdk_nag": {
      "rules_to_suppress": [
       {
@@ -133,7 +133,7 @@
  "Outputs": {
   "nearinstanceid": {
    "Value": {
-    "Ref": "NearLocalnetNodeV2101318CF442"
+    "Ref": "NearLocalnetNodeV2101Localnet91986FCF"
    },
    "Export": {
     "Name": "NearLocalnetInstanceId"
@@ -142,7 +142,7 @@
   "nearinstanceprivateip": {
    "Value": {
     "Fn::GetAtt": [
-     "NearLocalnetNodeV2101318CF442",
+     "NearLocalnetNodeV2101Localnet91986FCF",
      "PrivateIp"
     ]
    },
@@ -153,7 +153,7 @@
   "nearinstancepublicip": {
    "Value": {
     "Fn::GetAtt": [
-     "NearLocalnetNodeV2101318CF442",
+     "NearLocalnetNodeV2101Localnet91986FCF",
      "PublicIp"
     ]
    },

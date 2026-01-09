@@ -3,7 +3,8 @@ description: Deployment procedures, AWS CLI usage, and operational patterns
 globs:
   - "**/scripts/*.ts"
   - "**/package.json"
-alwaysApply: true
+  - "**/README.md"
+alwaysApply: false
 ---
 
 # Deployment and Operations

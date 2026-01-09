@@ -1,24 +1,24 @@
 {
   "near-localnet-common": {
-    "InstanceRoleArn": "arn:aws:iam::311843862895:role/near-localnet-common-NearNodeRole5BF1752D-Jx0KhC20SKhs",
-    "VpcId": "vpc-0655b93d83acfeda0",
-    "ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF": "subnet-0f15df0e53c5ab4b7",
-    "SecurityGroupId": "sg-0ebe68c6934643700",
-    "ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018": "sg-0ebe68c6934643700",
-    "ExportsOutputRefNearNodeRole5BF1752D644CF4FE": "near-localnet-common-NearNodeRole5BF1752D-Jx0KhC20SKhs"
+    "InstanceRoleArn": "arn:aws:iam::311843862895:role/near-localnet-common-NearNodeRole5BF1752D-YVmfxUBxVpsk",
+    "VpcId": "vpc-00241e8a39da08263",
+    "ExportsOutputRefNearVpcPublicSubnet1SubnetD881C8CB152738DF": "subnet-0a2aae0281352eded",
+    "SecurityGroupId": "sg-02f06dd3d4a055a79",
+    "ExportsOutputFnGetAttNearNodeSecurityGroup8025226DGroupId38AA7018": "sg-02f06dd3d4a055a79",
+    "ExportsOutputRefNearNodeRole5BF1752D644CF4FE": "near-localnet-common-NearNodeRole5BF1752D-YVmfxUBxVpsk"
   },
   "near-localnet-infrastructure": {
-    "nearinstanceid": "i-04e50891ed0111b73",
-    "nearinstanceprivateip": "10.0.13.20",
-    "nearinstancepublicip": "3.85.75.71"
+    "nearinstanceid": "i-09c82e48173935985",
+    "nearinstanceprivateip": "10.0.33.4",
+    "nearinstancepublicip": "54.159.83.199"
   },
   "near-localnet-install": {
-    "installdocumentname": "near-validate-install-near-localnet-install",
+    "installdocumentname": "near-localnet-install-nearvalidateinstall-5MnfJD0S3hjd",
     "installstatus": "Installation validation initiated - monitor via SSM"
   },
   "near-localnet-sync": {
-    "syncstatus": "9aa19ead-cfc8-4927-b5ac-a0b8cc0fdc6b",
+    "syncstatus": "b84d1643-c268-4f8f-b776-000ad6810971",
     "nearnetworkid": "localnet",
-    "nearrpcurl": "http://10.0.13.20:3030"
+    "nearrpcurl": "http://10.0.33.4:3030"
   }
 }

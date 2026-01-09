@@ -1,0 +1,96 @@
+---
+alwaysApply: true
+description: Layer 1 entry rule - NEAR Base foundation for the 5-layer simulator stack
+---
+
+# Layer 1: NEAR Base - Entry Rule
+
+**Foundation layer of the 5-layer NEAR Localnet Simulator Stack**
+
+## Layer Position
+
+```
+Layer 1: NEAR Base          → This repository ← YOU ARE HERE
+Layer 2: NEAR Services      → near-localnet-services
+Layer 3: Chain Signatures   → cross-chain-simulator (includes MPC)
+Layer 4: Intents Protocol   → near-intents-simulator
+Layer 5: User Applications  → Your dApp
+```
+
+**Depends on**: Nothing (foundation layer)
+**Provides to**: All higher layers - NEAR RPC endpoint
+
+## Critical Constraints
+
+1. **x86_64 ONLY** - NEAR Protocol does not support ARM64
+2. **RPC Port 3030** - VPC-only access
+3. **AWS Profile**: `--profile shai-sandbox-profile`
+
+## What This Layer Provides
+
+- NEAR Protocol RPC node (v2.10.1)
+- RPC endpoint: `http://{private-ip}:3030`
+- VPC, security groups, IAM roles
+- EC2 instance (m7a.2xlarge or t3.large)
+
+## Outputs for Higher Layers
+
+```typescript
+{
+  rpc_url: "http://10.0.55.70:3030",
+  network_id: "localnet",
+  vpc_id: "vpc-xxx",
+  instance_id: "i-xxx",
+  private_ip: "10.0.55.70"
+}
+```
+
+## Multi-Stack Architecture
+
+1. **Common Stack**: VPC, IAM, security groups (~2 min)
+2. **Infrastructure Stack**: EC2 instance (~5 min)
+3. **Install Stack**: NEAR installation validation (~15 min)
+4. **Sync Stack**: Service validation, RPC exposed (~immediate)
+
+**Total**: ~22 minutes
+
+## Deployment
+
+```bash
+# Standalone
+cd lib/near
+npm run deploy  # Uses --profile shai-sandbox-profile
+
+# Via Orchestrator
+cd /near-localnet-orchestrator
+npx near-orchestrator deploy near_base
+```
+
+## Specialized Rules
+
+Request these rules when working on specific tasks:
+
+- **cdk-patterns.mdc** - CDK stack patterns, Nag suppressions, resource naming
+- **deployment.mdc** - Deployment workflow, SSM access, troubleshooting
+- **near-protocol.mdc** - NEAR compilation, Rust setup, nearup configuration
+
+## Troubleshooting
+
+See `near-localnet-orchestrator/docs/lessons-learned/NEAR_LOCALNET_LESSONS_LEARNED.md`:
+- GOTCHA #2-6: Layer 1 specific (x86_64, compilation, RPC access, logs)
+
+## Quick Commands
+
+```bash
+# Build and deploy
+npm run build && npm run deploy
+
+# Export config for higher layers
+node dist/scripts/export-config.js
+
+# SSM connect to instance
+aws ssm start-session --target {instance-id} --profile shai-sandbox-profile
+
+# Check RPC status
+curl http://127.0.0.1:3030/status
+```

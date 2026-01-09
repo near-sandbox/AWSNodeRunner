@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/d8a2d4cad64ab4bfe85ecd18e2f47c3f62c5165f964e4b6fd81ccbd250ad257d.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/c2ee17d7ba1534042eb286000721b9f359182fd752c7e19d8e582a93ea97f88a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -312,7 +312,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/6600501cddd3f2143e3be3143b88bf1324567ad3008f879147806017119d4885.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/0ec975850be985c8388f3271be03bb1c1ee4d646f45851b3d3fca9e9de3373f7.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -345,16 +345,16 @@
             ]
           }
         ],
-        "/near-infrastructure/NearLocalnetNodeV2101/InstanceProfile": [
+        "/near-infrastructure/NearLocalnetNodeV2101Localnet/InstanceProfile": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "NearLocalnetNodeV2101InstanceProfile1AF7AF63"
+            "data": "NearLocalnetNodeV2101LocalnetInstanceProfileE4F6B173"
           }
         ],
-        "/near-infrastructure/NearLocalnetNodeV2101/Resource": [
+        "/near-infrastructure/NearLocalnetNodeV2101Localnet/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "NearLocalnetNodeV2101318CF442"
+            "data": "NearLocalnetNodeV2101Localnet91986FCF"
           }
         ],
         "/near-infrastructure/SsmParameterValue:--aws--service--canonical--ubuntu--server--24.04--stable--current--amd64--hvm--ebs-gp3--ami-id:C96584B6-F00A-464E-AD19-53AFF4B05118.Parameter": [
@@ -423,7 +423,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/92ff5afad9b37861a7382afba03cc5399747a20f4637ba6a16efc048f1d5199c.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/7cad497ab1c2c03b005ffc3bf244d3d38cf516b234ba8734033abcf99cb91edb.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -522,7 +522,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-deploy-role-311843862895-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-cfn-exec-role-311843862895-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/089bcf3e11eadfb8b83c2a685369991dc19f53b6b44c85b2580d784bca91ec93.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-311843862895-us-east-1/e3e2d20a7480d815ccccb146706f815ead2373b41dc8a0b07221222bb32f341d.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

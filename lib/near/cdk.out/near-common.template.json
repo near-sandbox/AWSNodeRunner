@@ -1497,6 +1497,17 @@
        "Action": "cloudformation:SignalResource",
        "Effect": "Allow",
        "Resource": "*"
+      },
+      {
+       "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParameter"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        "arn:aws:ssm:us-east-1:311843862895:parameter/near-localnet/localnet-account-key",
+        "arn:aws:ssm:us-east-1:311843862895:parameter/near-localnet/localnet-account-id"
+       ]
       }
      ],
      "Version": "2012-10-17"

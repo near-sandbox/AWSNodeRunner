@@ -4,7 +4,7 @@ globs:
   - "**/*near*.ts"
   - "**/config/**/*.ts"
   - "**/assets/**/*.sh"
-alwaysApply: true
+alwaysApply: false
 ---
 
 # NEAR Protocol Specific Patterns

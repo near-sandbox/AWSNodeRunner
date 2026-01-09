@@ -1,0 +1,63 @@
+---
+description: AWS CDK ECS debugging patterns for NotStabilized errors
+globs:
+  - "**/*stack*.ts"
+  - "**/*ecs*.ts"
+alwaysApply: false
+---
+
+# AWS CDK ECS Debugging
+
+When debugging `NotStabilized` errors or task failures in AWS ECS/Fargate deployments via CDK:
+
+## Investigation Steps
+
+1.  **Check Service Events**:
+    - Run `aws ecs describe-services --cluster <cluster-name> --services <service-name> --profile shai-sandbox-profile`
+    - Look at `events` for messages like "service ... has stopped running tasks".
+
+2.  **Inspect Stopped Tasks**:
+    - Run `aws ecs list-tasks --cluster <cluster-name> --desired-status STOPPED --profile shai-sandbox-profile`
+    - Run `aws ecs describe-tasks --cluster <cluster-name> --tasks <task-arn> --profile shai-sandbox-profile`
+    - Check `stoppedReason` and `stopCode`.
+    - Common errors:
+        - `Essential container in task exited`: Application crashed. Check CloudWatch Logs.
+        - `Task failed to start`: Infrastructure issue (networking, secrets, permissions).
+        - `CannotPullContainerError`: Image not found or permissions issue.
+        - `ResourceInitializationError`: Usually EFS mount failure or ENI attachment issue.
+
+3.  **Check CloudWatch Logs**:
+    - Identify the Log Group from the CDK code (`logDriver`).
+    - Check the latest log stream for the crashed task.
+    - **CRITICAL**: If NO logs appear, issue is infrastructure (EFS mount, ENI, etc), not application.
+
+4.  **Verify Networking**:
+    - Security Groups: Ensure containers can talk to each other and to necessary endpoints.
+    - VPC Endpoints / NAT Gateway: Fargate tasks in private subnets need NAT Gateway or VPC Endpoints.
+
+5.  **Verify IAM Permissions**:
+    - **Task Execution Role**: Needs permissions to pull images (ECR) and fetch secrets.
+    - **Task Role**: Needs permissions for AWS services the *application* calls directly.
+
+## Debugging Workflow
+
+### No CloudWatch Logs = Infrastructure Issue
+If tasks start but no logs appear:
+1. Check EFS mount (if using EFS)
+2. Check ENI attachment
+3. Check security group rules
+4. NOT an application problem
+
+### Has CloudWatch Logs = Application Issue  
+If logs appear but container crashes:
+1. Check environment variables
+2. Check secrets accessibility
+3. Check application startup script
+4. Verify all dependencies available
+
+## Common Fixes
+
+- **Missing Secrets**: Ensure the Task Execution Role has `secretsmanager:GetSecretValue` for the specific ARN.
+- **Wrong Architecture**: Check if image is `x86_64` vs `arm64` and matches `cpuArchitecture` in Task Definition.
+- **Health Checks**: If using ELB/Cloud Map, ensure the container health check passes.
+- **EFS Mount Failures**: Add security group rule allowing NFS (port 2049) from ECS tasks to EFS.

@@ -1,16 +1,16 @@
 {
   "version": "48.0.0",
   "files": {
-    "089bcf3e11eadfb8b83c2a685369991dc19f53b6b44c85b2580d784bca91ec93": {
+    "e3e2d20a7480d815ccccb146706f815ead2373b41dc8a0b07221222bb32f341d": {
       "displayName": "near-localnet-sync Template",
       "source": {
         "path": "near-sync.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "311843862895-us-east-1-d6a821cc": {
+        "311843862895-us-east-1-c4e3a9a1": {
           "bucketName": "cdk-hnb659fds-assets-311843862895-us-east-1",
-          "objectKey": "089bcf3e11eadfb8b83c2a685369991dc19f53b6b44c85b2580d784bca91ec93.json",
+          "objectKey": "e3e2d20a7480d815ccccb146706f815ead2373b41dc8a0b07221222bb32f341d.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::311843862895:role/cdk-hnb659fds-file-publishing-role-311843862895-us-east-1"
         }
